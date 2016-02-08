@@ -85,9 +85,7 @@ isSolve :: Paint -> Bool
 isSolve p = getLines p == getFill p
 
 solve :: Paint -> [Command]
-solve p = solve' p [] c
-	where
-		c = getReadyCommands p
+solve p = solve' p [] $ getReadyCommands p
 		
 solve' :: Paint -> [Command] -> [Command] -> [Command]
 solve' p x [] = x
@@ -96,4 +94,3 @@ solve' p x (y:ys)
 	| otherwise = solve' ap (y:x) (getOrderedCommands ap ys)
 		where
 			ap = applyCommand p y
-
