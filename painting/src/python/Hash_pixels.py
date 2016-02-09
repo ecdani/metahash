@@ -6,17 +6,14 @@ def is_not_over():
         return False
 
 # MAIN
-fichero = open("logo.in", "r")
-salida = open("result.txt", "w")
+fichero = open('../../in/learn_and_teach.in', 'r')
+salida = open('../../out/Hash_pixels_learn_and_teach_100391.txt', 'w')
 
 datos = fichero.readline() #Esto coge el numero de filas y columnas
 lineasFichero = fichero.readlines() # Esto coge el dibujo en si.
 
 lineasSalida = []
 
-# for linea in range(len(lineasFichero)):
-#     print(linea, lineasFichero[linea])
-# print(len(lineasFichero))
 i = 0
 for linea in range(len(lineasFichero)):
     for columna in range(len(lineasFichero[linea])):
