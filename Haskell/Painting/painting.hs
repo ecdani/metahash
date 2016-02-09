@@ -30,10 +30,10 @@ getPaint content = Paint rows cols lines fill
 		fill = take rows $ repeat (take cols (repeat False))
 
 getPoint :: Paint -> Row -> Column -> Bool
-getPoint p x y = x >= 0 && y >= 0 && x < (getRows p) && x < (getColumns p) && getLines p !! x !! y
+getPoint p x y = x >= 0 && y >= 0 && x < (getRows p) && y < (getColumns p) && getLines p !! x !! y
 
 getOneFill :: Paint -> Row -> Column -> Bool
-getOneFill p x y = x >= 0 && y >= 0 && x < (getRows p) && x < (getColumns p) && getFill p !! x !! y
+getOneFill p x y = x >= 0 && y >= 0 && x < (getRows p) && y < (getColumns p) && getFill p !! x !! y
 
 getAllLines :: Row -> Column -> [Command]
 getAllLines row col = [PAINT_LINE r1 c1 r2 c2 | r1 <- [0..row], c1 <- [0..col], r2 <- [0..row], c2 <- [0..col], (r1 == r2 && c1 < c2) || (c1 == c2 && r1 < r2)]
