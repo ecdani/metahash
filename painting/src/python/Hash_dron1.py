@@ -1,6 +1,6 @@
 # IMPORT
 from math import sqrt
-
+from operator import itemgetter
 # GLOBALES
 datosProblema = {}
 
@@ -63,18 +63,29 @@ def lecturaFichero(fichero, diccionario):
         datosPedidos.append(datosPedido)
     diccionario["orders_data"] = datosPedidos
     # Fin de lectura de pedidos
+
 # CAUTION: CAST EXPLICITO A LIST AL RECUPERAR DEL DICCIONARIO
+
 def determinarAlmacen(coord, tipoItem):
     global datosProblema
     rAlma = {}
+    datoAlmacen = []
     for alma in list(datosProblema["warehouses_data"]):
         for tipo in list(alma[1]):
             if tipo == tipoItem:
                 rAlma[datosProblema["warehouses_data"].index(alma)] = distanciaEuclidea(coord, alma[0])
                 #  a = alma eso es una tupla
                 # print(a)
+    min = rAlma[(rAlma.keys())[0]]
+    mejorAlmacen = 0
     for elem in rAlma.keys():
-        minimo = rAlma[elem]
+        if min > rAlma[elem]:
+            min,mejorAlmacen = rAlma[elem], elem
+
+    datoAlmacen.append(mejorAlmacen)
+    datoAlmacen.append(rAlma[mejorAlmacen])
+    datosProblema["warehouses_data"][mejorAlmacen][1][tipoItem] =- 1
+    return datoAlmacen
 
 
 
@@ -89,8 +100,26 @@ fichero = open('../../in/busy_day.in', 'r')
 
 datosProblema = {}
 lecturaFichero(fichero,datosProblema)
+
 # print(datosProblema["orders_data"][1][32])
-determinarAlmacen(40,4)
+# determinarAlmacen(40,4)
+
+rOrders = {}
+for orders in datosProblema["orders_data"]:
+    for tipo in orders[2]:
+        datoAlmacen = determinarAlmacen(orders[0],tipo)
+        rOrders[datosProblema["orders_data"].index(orders)] += datoAlmacen
+
+
+rOrders = sorted(rOrders.items(), key = list(itemgetter(1))[1])
+numeroDron = 0
+indice = 0
+for key in dict(rOrders).keys():
+    indice =+ 1
+    numeroDron = (indice % datosProblema["drones"]) + 1
+    rOrders[key]
+    for numero in
+    escribirComando(numeroDron,"L",datoAlmacen[0],)
 
 fichero.close()
 #salida.close()
