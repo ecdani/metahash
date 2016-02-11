@@ -1,3 +1,8 @@
+# IMPORT
+from math import sqrt
+
+# GLOBALES
+datosProblema = {}
 
 #FUNCIONES
 def lecturaFichero(fichero, diccionario):
@@ -56,28 +61,39 @@ def lecturaFichero(fichero, diccionario):
             tiposProductosOrdenados.append(int(num))
         datosPedido.append(tiposProductosOrdenados)
         datosPedidos.append(datosPedido)
-
+    diccionario["orders_data"] = datosPedidos
     # Fin de lectura de pedidos
+# CAUTION: CAST EXPLICITO A LIST AL RECUPERAR DEL DICCIONARIO
+def determinarAlmacen(coord, tipoItem):
+    global datosProblema
+    rAlma = {}
+    for alma in list(datosProblema["warehouses_data"]):
+        for tipo in list(alma[1]):
+            if tipo == tipoItem:
+                rAlma[datosProblema["warehouses_data"].index(alma)] = distanciaEuclidea(coord, alma[0])
+                #  a = alma eso es una tupla
+                # print(a)
+    for elem in rAlma.keys():
+        minimo = rAlma[elem]
 
 
 
+def distanciaEuclidea(coord1, coord2):
+    return sqrt((abs(coord1[0]-coord2[0])**2)+(abs(coord1[1]-coord2[1]))**2)
 
-
-
-
-
-
+#print(almacenes[0])
 
 # MAIN
 fichero = open('../../in/busy_day.in', 'r')
-salida = open('../../out/Hash_dron_python.txt', 'w')
+#salida = open('../../out/Hash_dron_python.txt', 'w')
 
 datosProblema = {}
 lecturaFichero(fichero,datosProblema)
-print(datosProblema)
+# print(datosProblema["orders_data"][1][32])
+determinarAlmacen(40,4)
 
 fichero.close()
-salida.close()
+#salida.close()
 
 def generarsolucion():
     salida = open('../../out/Hash_dron1.txt', 'w')
