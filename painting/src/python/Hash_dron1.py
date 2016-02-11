@@ -17,7 +17,7 @@ def lecturaFichero(fichero, diccionario):
     for peso in fichero.readline().split():
         pesoDeCadaProducto.append(int(peso))
     diccionario["products_data"] = [numeroProductos,pesoDeCadaProducto]
-
+    # products_data -> numeroProductos y [pesosProductos]
     # Fin de productos y pesos
 
     # Lectura lineas de almacenes. Tenemos un array de datos de almacen
@@ -41,7 +41,24 @@ def lecturaFichero(fichero, diccionario):
     # Fin de lecturas de almacenes
 
     #Lectura lineas de pedidos
-    linea = fichero.readline()
+    numeroPedidos = fichero.readline()
+    datosPedidos = []
+    for pedido in range(numeroProductos):
+        datosPedido = []
+        linea = fichero.readline().split()
+        coordenadasPedido = (int(linea[0]), int(linea[1]))
+        datosPedido.append(coordenadasPedido)
+        numeroObjetosPedido = int(fichero.readline())
+        datosPedido.append(numeroObjetosPedido)
+        tiposProductosOrdenados = []
+        linea = fichero.readline().split()
+        for num in linea:
+            tiposProductosOrdenados.append(int(num))
+        datosPedido.append(tiposProductosOrdenados)
+        datosPedidos.append(datosPedido)
+
+    # Fin de lectura de pedidos
+
 
 
 
