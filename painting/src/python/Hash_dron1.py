@@ -55,4 +55,22 @@ print(datosProblema)
 fichero.close()
 salida.close()
 
+def generarsolucion():
+    salida = open('../../out/Hash_dron1.txt', 'w')
+    salida.write('{0}\n'.format(len(lineasSalida)))
+    for x in lineasSalida:
+        salida.write(x)
+    salida.close()
 
+lineasSalida = []
+
+def escribirComando(dron, comando, destino, tipop, cantidad ):
+    """
+    Dron 0-N
+    Comando: D,Deliver W,Wait L,Load, U,Unload
+    Destino, Warehouse ID o Custormer ID
+    tipop: ID tipo producto 0-N
+    cantidad: Cantidad a cargar o descargar si es un deliver
+    """
+    global lineasSalida
+    lineasSalida.append('{0} {1} {2} {3} {4}\n'.format(str(dron), str(comando), str(destino), str(tipop), str(cantidad)))
