@@ -1,9 +1,15 @@
-# MAIN
-fichero = open('../../in/learn_and_teach.in', 'r')
-salida = open('../../out/Hash_lineas_learn_and_teach_123175.txt', 'w')
 
-datos = fichero.readline() #Esto coge el numero de filas y columnas
-lineasFichero = fichero.readlines() # Esto coge el dibujo en si.
+#FUNCIONES
+def lecturaFichero(fichero, lineasFichero, d):
+
+
+# MAIN
+fichero = open('../../in/busy_day.in', 'r')
+salida = open('../../out/Hash_dron_python.txt', 'w')
+
+#datos = fichero.readline() #Esto coge el numero de filas y columnas
+lineasFichero = [] # Esto los datos
+lecturaFichero(fichero,lineasFichero)
 
 lineasSalida = []
 
