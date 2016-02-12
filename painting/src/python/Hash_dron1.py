@@ -1,137 +1,105 @@
 # IMPORT
 from math import sqrt
-from operator import itemgetter
+from operator import itemgetter, attrgetter
+
 # GLOBALES
-datosProblema = {}
+dicc = {} # Mother of all data structures
+lineasSalida = [] # Buffer de instrucciones en String.
 
-#FUNCIONES
-def lecturaFichero(fichero, diccionario):
-    # Lectura linea inicial
+# FUNCIONES
+def lecturaFichero():
+    global dicc
+    fichero = open('../../in/busy_day.in', 'r')
+
+    ### Lectura linea inicial ###
     linea = fichero.readline().split()
-    diccionario["rows"] = int(linea[0])
-    diccionario["columns"] = int(linea[1])
-    diccionario["drones"] = int(linea[2])
-    diccionario["turns"] = int(linea[3])
-    diccionario["max_load"] = int(linea[4])
-    # Fin Procesamiento linea inicial
+    dicc["filas"] = int(linea[0])
+    dicc["columnas"] = int(linea[1])
+    dicc["drones"] = int(linea[2])
+    dicc["turnos"] = int(linea[3])
+    dicc["max_load"] = int(linea[4])
 
-    # Lectura de productos y pesos
+    ### Lectura de productos y pesos ###
     linea = fichero.readline()
-    numeroProductos = int(linea)
-    pesoDeCadaProducto = []
+    dicc["nproductos"] = int(linea)
     for peso in fichero.readline().split():
-        pesoDeCadaProducto.append(int(peso))
-    diccionario["products_data"] = [numeroProductos,pesoDeCadaProducto]
-    # products_data -> numeroProductos y [pesosProductos]
-    # Fin de productos y pesos
+        dicc["pesos"].append(int(peso))
 
-    # Lectura lineas de almacenes. Tenemos un array de datos de almacen
-    numeroAlmacenes = int(fichero.readline())
-    datosAlmacenes = []
-    # Cada posicion del array tiene una lista de dos elementos.
-    #   array[0] = coordenadas en una tupla (x,y)
-    #   array[1] = array con articulos de cada tipo
-    for almacen in range(numeroAlmacenes):
-        datosAlmacen = []
-        cantidadesDeProductos = []
+    ### Lectura lineas de almacenes ###
+    dicc["nalmacenes"] = int(fichero.readline())
+
+    dicc["almacenes"] = []
+    for almacen in range(dicc["nalmacenes"]):
         linea = fichero.readline().split()
-        coordenadasAlmacen = (int(linea[0]), int(linea[1]))
-        datosAlmacen.append(coordenadasAlmacen)
+        x = int(linea[0])
+        y = int(linea[1])
         linea = fichero.readline().split()
-        for elem in linea:
-            cantidadesDeProductos.append(int(elem))
-        datosAlmacen.append(cantidadesDeProductos)
-        datosAlmacenes.append(datosAlmacen)
-    diccionario["warehouses_data"] = datosAlmacenes
-    # Fin de lecturas de almacenes
+        stocks = []
+        for stock in linea:
+            stocks.append(int(stock))
+        dicc["almacenes"].append({'x':x, 'y':y, 'productos':stocks})
 
-    #Lectura lineas de pedidos
-    numeroPedidos = fichero.readline()
-    datosPedidos = []
-    for pedido in range(numeroProductos):
-        datosPedido = []
+    ### Lectura lineas de pedidos ###
+    dicc["npedidos"] = fichero.readline()
+    for pedido in range(dicc["npedidos"]):
         linea = fichero.readline().split()
-        coordenadasPedido = (int(linea[0]), int(linea[1]))
-        datosPedido.append(coordenadasPedido)
-        numeroObjetosPedido = int(fichero.readline())
-        datosPedido.append(numeroObjetosPedido)
-        tiposProductosOrdenados = []
+        x = int(linea[0])
+        y = int(linea[1])
+        nitems = int(fichero.readline())
+
         linea = fichero.readline().split()
-        for num in linea:
-            tiposProductosOrdenados.append(int(num))
-        datosPedido.append(tiposProductosOrdenados)
-        datosPedidos.append(datosPedido)
-    diccionario["orders_data"] = datosPedidos
-    # Fin de lectura de pedidos
-
-# CAUTION: CAST EXPLICITO A LIST AL RECUPERAR DEL DICCIONARIO
-
-def determinarAlmacen(coord, tipoItem):
-    global datosProblema
-    rAlma = {}
-    datoAlmacen = []
-    for alma in list(datosProblema["warehouses_data"]):
-        for tipo in list(alma[1]):
-            if tipo == tipoItem:
-                rAlma[datosProblema["warehouses_data"].index(alma)] = distanciaEuclidea(coord, alma[0])
-                #  a = alma eso es una tupla
-                # print(a)
-    min = rAlma[(rAlma.keys())[0]]
-    mejorAlmacen = 0
-    for elem in rAlma.keys():
-        if min > rAlma[elem]:
-            min,mejorAlmacen = rAlma[elem], elem
-
-    datoAlmacen.append(mejorAlmacen)
-    datoAlmacen.append(rAlma[mejorAlmacen])
-    datosProblema["warehouses_data"][mejorAlmacen][1][tipoItem] =- 1
-    return datoAlmacen
+        productos = []
+        for producto in linea:
+            productos.append(int(producto)) # Productos individuales
+        dicc["pedidos"].append({'x':x, 'y':y,'nitems':nitems, 'productos':productos})
+    fichero.close()
 
 
+def determinarAlmacen(pedido, keyproducto):
+    """
+    Determina el almacén más cercano a las coordenadas origen dadas para el
+    tipo de producto dado.
+    :param x: Coordenada origen x
+    :param y: Coordenada origen y
+    :param producto: ID producto
+    :return:
+    """
+    global dicc
+    rAlma = {} # Ranking Almacenes
+    for almacen in list(dicc['almacenes']):
+        for prod in list(almacen['productos']):
+            if prod == pedido['productos'][keyproducto]:
+                rAlma[dicc['almacenes'].index(almacen)] = distanciaEuclidea(pedido['x'],pedido['y'],almacen['x'],almacen['y'])
 
-def distanciaEuclidea(coord1, coord2):
-    return sqrt((abs(coord1[0]-coord2[0])**2)+(abs(coord1[1]-coord2[1]))**2)
+    min = rAlma[(rAlma.keys())[0]] # Cogemos un minimo random, pero real.
+    mejorAlmacen = (rAlma.keys())[0]
 
-#print(almacenes[0])
+    for idalmacen in rAlma.keys():
+        if min > rAlma[idalmacen]:
+            min,mejorAlmacen = rAlma[idalmacen], idalmacen
 
-# MAIN
-fichero = open('../../in/busy_day.in', 'r')
-#salida = open('../../out/Hash_dron_python.txt', 'w')
+    dicc["almacenes"][mejorAlmacen]['productos'][keyproducto] =- 1 # Decrementamos stock
 
-datosProblema = {}
-lecturaFichero(fichero,datosProblema)
-
-# print(datosProblema["orders_data"][1][32])
-# determinarAlmacen(40,4)
-
-rOrders = {}
-for orders in datosProblema["orders_data"]:
-    for tipo in orders[2]:
-        datoAlmacen = determinarAlmacen(orders[0],tipo)
-        rOrders[datosProblema["orders_data"].index(orders)] += datoAlmacen
+    pedido['productos'][keyproducto] = {'producto': pedido['productos'][keyproducto],'mejorAlmacen':mejorAlmacen, 'scoreAlmacen': rAlma[mejorAlmacen] }
+    # En teoría no necesitamos devolver si guardamos los datos junto al producto del pedido.
+    # AlmaDet = {'id': mejorAlmacen, 'score':rAlma[mejorAlmacen]}
+    # return AlmaDet
 
 
-rOrders = sorted(rOrders.items(), key = list(itemgetter(1))[1])
-numeroDron = 0
-indice = 0
-for key in dict(rOrders).keys():
-    indice =+ 1
-    numeroDron = (indice % datosProblema["drones"]) + 1
-    rOrders[key]
-    for numero in
-    escribirComando(numeroDron,"L",datoAlmacen[0],)
+def distanciaEuclidea(x1,y1,x2,y2):
+    return sqrt((abs(x1-x2)**2)+(abs(y1-y2))**2)
 
-fichero.close()
-#salida.close()
-
-def generarsolucion():
+def generarSolucion():
+    """
+    Escribe un txt con los comandos solucion
+    :return:
+    """
+    global lineasSalida
     salida = open('../../out/Hash_dron1.txt', 'w')
     salida.write('{0}\n'.format(len(lineasSalida)))
     for x in lineasSalida:
         salida.write(x)
     salida.close()
-
-lineasSalida = []
 
 def escribirComando(dron, comando, destino, tipop, cantidad ):
     """
@@ -143,3 +111,35 @@ def escribirComando(dron, comando, destino, tipop, cantidad ):
     """
     global lineasSalida
     lineasSalida.append('{0} {1} {2} {3} {4}\n'.format(str(dron), str(comando), str(destino), str(tipop), str(cantidad)))
+
+############################### MAIN ###################################
+
+lecturaFichero()
+
+rOrders = {}
+for pedido in dicc["pedidos"]:
+    dicc["pedidos"][pedido]['score'] = 0
+    for keyproducto in pedido['productos'].keys():
+        determinarAlmacen(pedido,keyproducto)
+        dicc["pedidos"][pedido]['score'] += dicc["pedidos"][pedido]['productos'][keyproducto]['scoreAlmacen']
+
+sorted(dicc["pedidos"], key=attrgetter('score')) # En orden ascendente en teoría
+
+nDron = 0
+indice = 0
+for pedido in dicc['pedidos']:
+    indice =+ 1
+    nDron = (indice % dicc['drones']) + 1
+    carga = 0
+    for producto in pedido['productos']:
+        if carga > dicc['max_load']:
+            escribirComando(nDron,"D",producto['mejorAlmacen'],producto['producto'],1)
+            carga = 0
+        escribirComando(nDron,"L",producto['mejorAlmacen'],producto['producto'],1)
+        carga += dicc["pesos"][producto['producto']]
+
+generarSolucion()
+
+
+#######################################################################
+
