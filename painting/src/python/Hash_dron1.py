@@ -134,11 +134,11 @@ sorted(dicc['pedidos'], key=itemgetter('score')) # En orden ascendente en teorí
 nDron = 0
 indice = 0
 for pedido in dicc['pedidos']:
-    indice =+ 1
-    nDron = (indice % dicc['drones']) + 1
+    indice += 1
+    nDron = (indice % int(dicc['drones']))
     carga = 0
     for producto in pedido['productos']:
-        if carga > dicc['max_load']:
+        if carga + dicc["pesos"][producto['producto']] > dicc['max_load']:
             escribirComando(nDron,"D",producto['mejorAlmacen'],producto['producto'],1)
             carga = 0
         escribirComando(nDron,"L",producto['mejorAlmacen'],producto['producto'],1)
@@ -148,4 +148,8 @@ generarSolucion()
 
 
 #######################################################################
-
+"""
+ERRORES:
+ - Line 128: Warehouse 3 trying to dispatch goods that arent stocked!
+ - Line 108: Drone 15 requested to unload product item that is not loaded.
+"""
