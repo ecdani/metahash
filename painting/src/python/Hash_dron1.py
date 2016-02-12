@@ -1,4 +1,5 @@
 # IMPORT
+import pprint
 from math import sqrt
 from operator import itemgetter, attrgetter
 
@@ -22,6 +23,7 @@ def lecturaFichero():
     ### Lectura de productos y pesos ###
     linea = fichero.readline()
     dicc["nproductos"] = int(linea)
+    dicc["pesos"] = []
     for peso in fichero.readline().split():
         dicc["pesos"].append(int(peso))
 
@@ -40,7 +42,8 @@ def lecturaFichero():
         dicc["almacenes"].append({'x':x, 'y':y, 'productos':stocks})
 
     ### Lectura lineas de pedidos ###
-    dicc["npedidos"] = fichero.readline()
+    dicc["npedidos"] = int(fichero.readline())
+    dicc['pedidos'] = []
     for pedido in range(dicc["npedidos"]):
         linea = fichero.readline().split()
         x = int(linea[0])
@@ -51,7 +54,7 @@ def lecturaFichero():
         productos = []
         for producto in linea:
             productos.append(int(producto)) # Productos individuales
-        dicc["pedidos"].append({'x':x, 'y':y,'nitems':nitems, 'productos':productos})
+        dicc['pedidos'].append({'x':x, 'y':y,'nitems':nitems, 'productos':productos})
     fichero.close()
 
 
@@ -65,22 +68,21 @@ def determinarAlmacen(pedido, keyproducto):
     :return:
     """
     global dicc
-    rAlma = {} # Ranking Almacenes
+    rAlma = [] # Ranking Almacenes
     for almacen in list(dicc['almacenes']):
-        for prod in list(almacen['productos']):
-            if prod == pedido['productos'][keyproducto]:
-                rAlma[dicc['almacenes'].index(almacen)] = distanciaEuclidea(pedido['x'],pedido['y'],almacen['x'],almacen['y'])
+        if almacen['productos'][pedido['productos'][keyproducto]] > 0:
+            de = distanciaEuclidea(pedido['x'],pedido['y'],almacen['x'],almacen['y'])
+            rAlma.append( {'de':de, 'idAlmacen': dicc['almacenes'].index(almacen)} )
 
-    min = rAlma[(rAlma.keys())[0]] # Cogemos un minimo random, pero real.
-    mejorAlmacen = (rAlma.keys())[0]
+    min = rAlma[0] # Cogemos un minimo random, pero real.
 
-    for idalmacen in rAlma.keys():
-        if min > rAlma[idalmacen]:
-            min,mejorAlmacen = rAlma[idalmacen], idalmacen
+    for almacen in rAlma:
+        if min['de'] > almacen['de']:
+            min = almacen
 
-    dicc["almacenes"][mejorAlmacen]['productos'][keyproducto] =- 1 # Decrementamos stock
+    dicc["almacenes"][almacen['idAlmacen']]['productos'][pedido['productos'][keyproducto]] -= 1 # Decrementamos stock
 
-    pedido['productos'][keyproducto] = {'producto': pedido['productos'][keyproducto],'mejorAlmacen':mejorAlmacen, 'scoreAlmacen': rAlma[mejorAlmacen] }
+    pedido['productos'][keyproducto] = {'producto': pedido['productos'][keyproducto],'mejorAlmacen':min['idAlmacen'], 'scoreAlmacen': min['de'] }
     # En teoría no necesitamos devolver si guardamos los datos junto al producto del pedido.
     # AlmaDet = {'id': mejorAlmacen, 'score':rAlma[mejorAlmacen]}
     # return AlmaDet
@@ -116,14 +118,18 @@ def escribirComando(dron, comando, destino, tipop, cantidad ):
 
 lecturaFichero()
 
-rOrders = {}
-for pedido in dicc["pedidos"]:
-    dicc["pedidos"][pedido]['score'] = 0
-    for keyproducto in pedido['productos'].keys():
-        determinarAlmacen(pedido,keyproducto)
-        dicc["pedidos"][pedido]['score'] += dicc["pedidos"][pedido]['productos'][keyproducto]['scoreAlmacen']
+#pp = pprint.PrettyPrinter(indent=4)
+#pp.pprint(dicc)
 
-sorted(dicc["pedidos"], key=attrgetter('score')) # En orden ascendente en teoría
+rOrders = {}#dicc["pedidos"]
+for pedido in dicc['pedidos']:
+    pedido['score'] = 0
+    for keyproducto in range(len(pedido['productos'])):
+        determinarAlmacen(pedido,keyproducto)
+        pedido['score'] += pedido['productos'][keyproducto]['scoreAlmacen']
+print( str(dicc['pedidos'][0]['score']))
+sorted(dicc['pedidos'], key=itemgetter('score')) # En orden ascendente en teoría
+
 
 nDron = 0
 indice = 0
