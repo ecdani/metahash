@@ -29,7 +29,7 @@ Los no terminales aceptan varias definiciones. La linea se parseará con la prim
 Main = foo Int *Int -> 1@Command -> End  | Problem
 Command = circle Int Int Float | Circle
 Command = rect Int Int Int Int | Rect
-End -> Int
+End = Int
 ```
 Si se omite la función que recibir los argumentos, se utilizar la función identidad, devolviendo lo mismo que reciba. Sólo debería omitirse cuando sólo haya un único argumento, como en el caso de `End = Int`.
 
