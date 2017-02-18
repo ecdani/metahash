@@ -16,7 +16,7 @@ Main = foo Int *Int -> 1@Command -> End  | Problem
 ```
 En la parte derecha, `foo Int *Int` indica que la línea debe contener literalmente `foo` seguido de un entero, seguido de una lista de enteros. Todo ello en la misma línea. Los tipos implementados son `Int`, `Float`, `String`, o sus versiones precedidas por un asterisco, para indicar que son una lista indefinida.
 
-El símbolo `->` indica que la siguiente línea deben ajustar con producciones de dicho no terminal. Estos no terminales admiten los siguientes modificadores:
+El símbolo `->` indica que la siguiente línea debe ajustar con una producción de dicho no terminal. Estos no terminales admiten los siguientes modificadores:
 
 * `n@`NoTerminal indica que tiene que leer el número de lineas especificadas por el **n-ésimo** argumento de la línea actual. Por ejemplo, `1@Command` indica que hay que leer el número de comandos especificado por el entero que se lee tras `foo`, que es el primer argumento leído.
 * `n`NoTerminal indica que tiene que leer el número de lineas especificadas por **n**. Por ejemplo, `3Command` indica que hay que leer 3 comandos.
