@@ -10,30 +10,50 @@ parse(path, struct, globals())
 ```
 
 ## Definición de la estructura del fichero
-La estructura se definen en una cadena de texto, donde cada línea contiene una regla. La primera producción del programa debe empezar por el no terminal `Main`:
+La estructura se definen en una cadena de texto, donde cada línea de la estructura contiene una regla. Las reglas tienen el siguiente aspecto:
 ```
-Main = foo Int *Int -> 1@Command -> End  | Problem
+Clase = literal1 Tipo1 Tipo2 otro literal Tipo3 -> Clase2 -> Clase3 -> Clase4 | Manejador
 ```
-En la parte derecha, `foo Int *Int` indica que la línea debe contener literalmente `foo` seguido de un entero, seguido de una lista de enteros. Todo ello en la misma línea. Los tipos implementados son `Int`, `Float`, `String`, o sus versiones precedidas por un asterisco, para indicar que son una lista indefinida.
+La primera producción del programa debe empezar por una regla de la clase `Main`, por ejemplo:
+```
+Main = foo Int Int -> Albondiga -> Macarron | Problem
+```
+Esta es una regla de la **clase** `Main`. Después del símbolo igual `=` se especifica qué debe contener la línea a ser parseada. En este caso, la clase `Main` debe encontrarse con una línea que contenga literalmente la palabra `foo` seguida de dos enteros. Los **tipos** implementados son entero `Int`, real `Float`, cadenas `String`, listas de enteros `*Int`, listas de reales `*Float`, y listas de cadenas `*String`.
 
-El símbolo `->` indica que la siguiente línea debe ajustar con una producción de dicho no terminal. Estos no terminales admiten los siguientes modificadores:
+Opcionalmente, en la parte derecha de la regla pueden aparecer una o varias `-> ClaseX`, que indican que la línea que se ha parseado debe ir seguida de otra línea que se parsee con una regla de la **clase** `ClaseX`. En nuestro ejemplo, estamos diciendo que la primera linea tiene dos enteros, y que le siguen una linea de la **clase** `Albondiga` y una linea de la **clase** `Macarron`. Añadiremos una regla para cada clase:
+```
+Main = foo Int Int -> Albondiga -> Macarron | Problem
+Albondiga = Int | Albon
+Macarron = Float *Int | Mac
+```
+Por ejemplo, para el siguiente fichero de entrada:
+```
+foo 1 2
+3
+3.2 4 2 5 2 6 2
+```
+Empezamos parseando en la **linea 1**, y siempre se empieza a parsear con una regla de la **clase** `Main`. Vemos que la primera linea se ajusta a la definición de `Main = foo Int Int`, por lo tanto leemos el `1` y el `2`. Ahora la regla de `Main` nos dice que lo que sigue (`-> Albondiga`) se parsea con una regla de la **clase** `Albondiga`.
 
-* `n@`NoTerminal indica que tiene que leer el número de lineas especificadas por el **n-ésimo** argumento de la línea actual. Por ejemplo, `1@Command` indica que hay que leer el número de comandos especificado por el entero que se lee tras `foo`, que es el primer argumento leído.
-* `n`NoTerminal indica que tiene que leer el número de lineas especificadas por **n**. Por ejemplo, `3Command` indica que hay que leer 3 comandos.
-* `*`NoTerminal indica que tiene que leer un número indefinido de líneas.
+Estamos en la **linea 2** y se debe parsear con una regla de la **clase** `Albondiga`, para la cual solo hemos puesto una regla: `Albondiga = Int | Albon`. Como la segunda línea sólo contiene un entero, se ajusta a la definicin y podemos leer el `3`. Como la regla de `Albondiga` no nos dice que después vaya algo (no tiene ninguna flecha `->`) ¡hemos leído una albondiga completa! Así que devolvemos a la regla que llamó a la albondiga el resultado `Albon(3)`, y seguimos.
 
-Finalmente, lo que se encuentra tras la barra `|` indica el nombre de la función que atenderá los parámetros. Si el nombre es de una clase, se pasarán los argumentos al constructor y se obtendrá una instancia de dicha clase. Nótese que la regla `Main`, por ejemplo, recogerá un entero, una lista de enteros, una lista de lo que devuelvan los no terminales `Command` seguido de lo que devuelva el no terminal `End`, por lo que la función `Problem` recibirá 4 parámetros.
+Estamos en la **linea 3** y ahora `Main` nos dice que viene un macarrón (`-> Macarron`). La única regla de la **clase** `Macarron` es `Macarron = Float *Int | Mac`, y vemos que encaja con la tercera linea. Por lo tanto leemos el real `3.2` y la lista de enteros `[4,2,5,2,6,2]`, y devolvemos a main el resultado `Mac(3.2,[4,2,5,2,6,2])`.
 
-Los no terminales aceptan varias definiciones. La linea se parseará con la primera definición que se ajuste:
+La regla de la clase `Main` ha terminado, y el fichero también, as que devolvemos como resultado `Problem(1,2,Albon(3),Mac(3.2,[4,2,5,2,6,2]))`.
+
+Las **clases** especificadas tras una flecha `->` admiten los siguientes modificadores:
+
+* `n@`Clase indica que tiene que leer el número de lineas especificadas por el **n-ésimo** dato parseado en la línea actual. Por ejemplo, `1@Clase` indica que a continuación hay que leer tantas lineas con reglas de la **clase** `Clase` como indique el **n-ésimo** argumento parseado en la linea actual.
+* `n`Clase indica que a continuación hay que leer tantas lineas con la **clase** `Clase` como indique el número **n**. Por ejemplo, `3Clase` indica que hay que leer las **3** líneas siguientes con reglas de la **clase** `Clase`.
+* `*`Clase indica que tiene que parsear tantas líneas sigueintes como pueda con reglas de la **clase** `Clase`.
+
+Las **clases** aceptan varias reglas. Una linea a parsear con uan clase, se parseará con la priemra regla de dicha clase con la que pueda ajustarse:
 ```
 Main = foo Int *Int -> 1@Command -> End  | Problem
 Command = circle Int Int Float | Circle
 Command = rect Int Int Int Int | Rect
 End = Int
 ```
-Si se omite la función que recibe los argumentos, se utilizará la función identidad, devolviendo lo mismo que reciba. Sólo debería omitirse cuando sólo haya un único argumento, como en el caso de `End = Int`.
-
-En la parte derecha, antes de la primera flecha `->` sólo se puede usar texto literal o los tipos mencionados anteriormente. Después de cada flecha, sólo se puede indicar otro no terminal, con o sin modificadores. Se puede terminar la lectura del fichero prematuramente si tras una flecha ponemos un punto, `End = Int -> .`.
+Si se omite la función que recibe los argumentos, se utilizará la función identidad, devolviendo lo mismo que se haya leido. Sólo debería omitirse cuando sólo haya un único argumento, como en el caso de `End = Int`.
 
 ## Ejemplos
 
