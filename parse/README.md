@@ -18,7 +18,7 @@ La primera regla del programa debe ser de la clase `Main`, por ejemplo:
 ```
 Main = foo Int Int -> Albondiga -> Macarron | Problem
 ```
-Esta es una regla de la **clase** `Main`. Después del símbolo igual `=` se especifica qué debe contener la línea a ser parseada. En este caso, la clase `Main` debe encontrarse con una línea que contenga literalmente la palabra `foo` seguida de dos enteros. Los **tipos** implementados son entero `Int`, real `Float`, cadenas `String`, lista de enteros `*Int`, lista de reales `*Float`, y lista de cadenas `*String`.
+Esta es una regla de la **clase** `Main`. Después del símbolo igual `=` se especifica qué debe contener la línea a ser parseada. En este caso, la clase `Main` debe encontrarse con una línea que contenga literalmente la palabra `foo` seguida de dos enteros. Los **tipos** implementados son entero `Int`, real `Float`, cadena `String`, lista de enteros `*Int`, lista de reales `*Float`, y lista de cadenas `*String`.
 
 Opcionalmente, en la parte derecha de la regla pueden aparecer una o varias `-> ClaseX`, que indican que la línea que se ha parseado debe ir seguida de otra línea que se parsee con una regla de la **clase** `ClaseX`. En nuestro ejemplo, estamos diciendo que la primera linea tiene dos enteros, y que le siguen una linea de la **clase** `Albondiga` y una linea de la **clase** `Macarron`. Añadiremos una regla para cada clase:
 ```
@@ -44,9 +44,9 @@ Las **clases** especificadas tras una flecha `->` admiten los siguientes modific
 
 * `n@Clase` indica que tiene que leer el número de lineas especificadas por el **n-ésimo** dato parseado en la línea actual. Por ejemplo, `1@Clase` indica que a continuación hay que leer tantas lineas con reglas de la **clase** `Clase` como indique el **n-ésimo** argumento parseado en la linea actual.
 * `nClase` indica que a continuación hay que leer tantas lineas con la **clase** `Clase` como indique el número **n**. Por ejemplo, `3Clase` indica que hay que leer las **3** líneas siguientes con reglas de la **clase** `Clase`.
-* `*Clase` indica que tiene que parsear tantas líneas sigueintes como pueda con reglas de la **clase** `Clase`.
+* `*Clase` indica que tiene que parsear tantas líneas siguientes como pueda con reglas de la **clase** `Clase`.
 
-Las **clases** aceptan varias reglas. Una linea a parsear con uan clase, se parseará con la priemra regla de dicha clase con la que pueda ajustarse:
+Las **clases** aceptan varias reglas. Una linea a parsear con una clase, se parseará con la primera regla de dicha clase con la que pueda ajustarse:
 ```
 Main = foo Int *Int -> 1@Command -> End  | Problem
 Command = circle Int Int Float | Circle
