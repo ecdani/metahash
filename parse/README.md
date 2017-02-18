@@ -57,7 +57,7 @@ Las **clases** especificadas tras una flecha `->` admiten argumentos, encerrados
 Clase = ... -> Clase2(arg1,arg2) -> Clase3(arg1) -> Clase4
 ```
 
-Estos argumentos pueden ser números literales `n`, el n-ésimo dato parseado por la regla `n@`, o el n-ésimo argumento recibido por la regla `#n`. Por ejemplo:
+Estos argumentos pueden ser números literales `n`, el n-ésimo dato parseado por la regla `n@`, o el n-ésimo argumento recibido por la regla `n#`. Por ejemplo:
 ```
 Main = Int Int -> 1@Block(2@) | Problem
 Block = -> 1#Line
