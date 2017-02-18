@@ -55,6 +55,13 @@ End = Int
 ```
 Si se omite la función que recibe los argumentos, se utilizará la función identidad, devolviendo lo mismo que se haya leido. Sólo debería omitirse cuando sólo haya un único argumento, como en el caso de `End = Int`.
 
+Para dejar de leer el fichero prematuramente, se puede utilizar la clase punto `.`:
+```
+Main = foo Int *Int -> 1@Command -> .  | Problem
+Command = circle Int Int Float | Circle
+Command = rect Int Int Int Int | Rect
+```
+
 ## Ejemplos
 
 ### Ñiaaa 1
