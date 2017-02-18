@@ -40,11 +40,33 @@ Estamos en la **linea 3** y ahora `Main` nos dice que viene un macarrón (`-> Ma
 
 La regla de la clase `Main` ha terminado, y el fichero también, así que devolvemos como resultado `Problem(1,2,Albon(3),Mac(3.2,[4,2,5,2,6,2]))`.
 
+### Modificadores
+
 Las **clases** especificadas tras una flecha `->` admiten los siguientes modificadores:
 
-* `n@Clase` indica que tiene que leer el número de lineas especificadas por el **n-ésimo** dato parseado en la línea actual. Por ejemplo, `1@Clase` indica que a continuación hay que leer tantas lineas con reglas de la **clase** `Clase` como indique el **n-ésimo** argumento parseado en la linea actual.
+* `n@Clase` indica que tiene que leer el número de lineas especificadas por el **n-ésimo** dato parseado en la línea actual. Por ejemplo, `1@Clase` indica que a continuación hay que leer tantas lineas con reglas de la **clase** `Clase` como indique el **n-ésimo** dato parseado en la linea actual.
+* `n#Clase` indica que tiene que leer el número de lineas especificadas por el **n-ésimo** argumento de la regla actual. Por ejemplo, `1#Clase` indica que a continuación hay que leer tantas lineas con reglas de la **clase** `Clase` como indique el **n-ésimo** argumento de la regla actual.
 * `nClase` indica que a continuación hay que leer tantas lineas con la **clase** `Clase` como indique el número **n**. Por ejemplo, `3Clase` indica que hay que leer las **3** líneas siguientes con reglas de la **clase** `Clase`.
 * `*Clase` indica que tiene que parsear tantas líneas siguientes como pueda con reglas de la **clase** `Clase`.
+
+### Paso de argumentos
+
+Las **clases** especificadas tras una flecha `->` admiten argumentos, encerrados entre paréntesis y separados por comas:
+
+```
+Clase = ... -> Clase2(arg1,arg2) -> Clase3(arg1) -> Clase4
+```
+
+Estos argumentos pueden ser números literales `n`, el n-ésimo dato parseado por la regla `n@`, o el n-ésimo argumento recibido por la regla `#n`. Por ejemplo:
+```
+Main = Int Int -> 1@Block(2@) | Problem
+Block = -> 1#Line
+Line = Int Int | Line
+```
+
+El segundo dato ledo por ```Main``` se pasa como primer argumento de ```Block```. Luego el primer argumento es usado para indicar el número de lineas de la clase ```Line``` a parsear.
+
+### Ajuste de patrones
 
 Las **clases** aceptan varias reglas. Una linea a parsear con una clase, se parseará con la primera regla de dicha clase con la que pueda ajustarse:
 ```
