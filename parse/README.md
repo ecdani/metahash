@@ -34,3 +34,9 @@ End = Int
 Si se omite la función que recibir los argumentos, se utilizar la función identidad, devolviendo lo mismo que reciba. Sólo debería omitirse cuando sólo haya un único argumento, como en el caso de `End = Int`.
 
 En la parte derecha, antes de la primera flecha `->` sólo se puede usar texto literal o los tipos mencionados anteriormente. Después de cada flecha, sólo se puede indicar otro no terminal, con o sin modificadores. Se puede terminar la lectura del fichero prematuramente si tras una flecha ponemos un punto, `End = Int -> .`.
+
+## Ejemplos
+
+### Ñiaaa 1
+
+### Ñiaaa 2
