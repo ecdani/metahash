@@ -10,7 +10,7 @@ parse(path, struct, globals())
 ```
 
 ## Definición de la estructura del fichero
-La estructura se definen en una cadena de texto, donde cada línea contiene una producción. La primera producción del programa debe empezar por el no terminal `Main`:
+La estructura se definen en una cadena de texto, donde cada línea contiene una regla. La primera producción del programa debe empezar por el no terminal `Main`:
 ```
 Main = foo Int *Int -> 1@Command -> End  | Problem
 ```
