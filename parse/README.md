@@ -64,7 +64,7 @@ Block = -> 1#Line
 Line = Int Int | Line
 ```
 
-El segundo dato ledo por ```Main``` se pasa como primer argumento de ```Block```. Luego el primer argumento es usado para indicar el número de lineas de la clase ```Line``` a parsear.
+El segundo dato leído por ```Main``` se pasa como primer argumento de ```Block```. Luego el primer argumento es usado para indicar el número de lineas de la clase ```Line``` a parsear.
 
 ### Ajuste de patrones
 
