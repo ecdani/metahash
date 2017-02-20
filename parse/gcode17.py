@@ -16,7 +16,7 @@ def primitive(type):
 
 def parse(src, struct, funcs):
 	funcs['identity'] = lambda x: x
-	return recparse(list(file(src)), structure(funcs, struct), 'Main')
+	return recparse(list(file(src)), structure(funcs, struct), 'Main')[1]
 
 def recparse(lines, patterns, status, params = None, formals = None, last_formals = None):
 	if status == ".":
