@@ -62,12 +62,12 @@ def determinarAlmacen(pedido, keyproducto):
     """
     Determina el almacén más cercano a las coordenadas origen dadas para el
     tipo de producto dado.
-    :param x: Coordenada origen x
-    :param y: Coordenada origen y
-    :param producto: ID producto
-    :return:
+    :param pedido: Coordenada origen x
+    :param keyproducto: Coordenada origen y
+    :return el almacen
     """
     global dicc
+
     rAlma = [] # Ranking Almacenes
     for almacen in list(dicc['almacenes']):
         if almacen['productos'][pedido['productos'][keyproducto]] > 0:
