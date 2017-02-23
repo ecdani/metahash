@@ -6,5 +6,5 @@ def filein(i):
 	global files
 	return "in/" + files[i] + ".in"
 	
-def fileout():
-	return "out/" + str(int(time())) + ".out"
+def fileout(name = "out"):
+	return "out/" + str(name) + "-" + str(int(time())) + ".out"
