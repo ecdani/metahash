@@ -1,6 +1,6 @@
 from time import time
 
-files = {0:"small", 1:"medium", 2:"big"}
+files = {0:"kittens", 1:"me_at_the_zoo", 2:"trending_today", 3:"videos_words_spreading"}
 
 def filein(i):
 	global files

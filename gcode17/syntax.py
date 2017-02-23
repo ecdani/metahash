@@ -4,14 +4,12 @@ import classes
 structure = """
 Main = Int Int Int Int Int -> Videos -> 2@Endpoint -> 3@Request | Problem
 Videos = *Int
-Endpoint = Int Int -> 2@Cache | Endpoint
+Endpoint = Int Int -> 2@Cache | EndPoint
 Cache = Int Int | pair
 Request = Int Int Int | Request
 """
 
-def pair(x,y):
-	return (x,y)
-
-def getProblem(filein):
+def getProblem(filein, dictionary):
 	global structure
-	return parse(filein, structure, globals())
+	dictionary['pair'] = (lambda x, y: (x,y))
+	return parse(filein, structure, dictionary)
