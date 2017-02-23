@@ -14,7 +14,7 @@ class Problem:
             self.endpoints.append(val)
 
         for n in range(ncache):
-            self.caches.append(Cache(cache_size))
+            self.caches.append(Cache(cache_size,n))
 
         def videoInCache(IDC, IDV):
             # comprobar si en esa caché está ese video
@@ -29,8 +29,14 @@ class Problem:
         
         def videoPush (IDC, IDV):
             self.caches[IDC].videos.append(IDV)
-
         
+        # Numero de cachés que tienen algún video dentro
+        def notEmptyCache():
+            nNotEmpty = 0
+            for i,c in enumerate(self.caches)
+                if len(c.videos) != 0:
+                    nNotEmpty += 1
+            return nNotEmpty
 
 
 
@@ -47,7 +53,14 @@ class Request:
         self.nRequest = nRequest
 
 class Cache:
-    def __init__ (self,size_cache):
+    def __init__ (self,size_cache, IDC):
         self.videos = []
         self.size_cache = size_cache
+        # Añadir ID
+        self.IDC = IDC
+    # Is Empty?
+    def Empty(self):
+        return (len(self.videos) == 0)
     
+    def __str__(self):
+        return str(self.IDC) + ' '.join(str(x) for x in self.videos)
