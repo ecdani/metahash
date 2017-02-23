@@ -42,3 +42,8 @@ f.close()
 
 
 ################################## PARTE DANIEL - JOSE  
+
+def algoritmo(requests,endpoints):
+    sr = sorted(requests, key=operator.attrgetter('nRequest'), reverse=False))
+    se = sorted(requests, key=lambda student: student[2], reverse=True))
+
