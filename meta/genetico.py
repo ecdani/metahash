@@ -3,10 +3,8 @@ from random import randint, random
 
 # MAIN
 
-tpob = 10 # Tamaño de la población (número de programas) (Numero par plz)
+tpob = 10 # Tamaño de la población (Numero par plz)
 
-tmem = 6 # Tamaño de la memoria del programa
-refmaxsize = 3 # Numero máximo de referencias a memoria de una instruccion.
 maxgenest = 200 # Número máximo de generaciones estancadas
 pmutacion = 0.05 # Probabilidad de mutacion
 pcruze = 0.5 # Probabilidad de cruze
@@ -22,16 +20,15 @@ class Gen:
         # Nuevo gen Aleatorio
 
 class Individuo(BaseClassName):
-    global tgenes, ini, obj
+    global tgenes
     def __init__(self):
         self.score = 0
-        self.m = ini.copy() # Memoria (copy no copia en profundidad)
-        self.genes = {} # dict.fromkeys(range(100)) # Lineas
+        self.genes = {}
         for j in range(tgenes):
             self.genes[j] = Gen()
 
     def evaluar(self):
-        score = 0
+        self.score = 0
         # TODO
 
     def mutarGen(self):
