@@ -1,61 +1,81 @@
 import operator, copy
 from random import randint, random
 
-# MAIN
-
-tpob = 10 # Tamaño de la población (Numero par plz)
-
-maxgenest = 200 # Número máximo de generaciones estancadas
-pmutacion = 0.05 # Probabilidad de mutacion
-pcruze = 0.5 # Probabilidad de cruze
-tcruze # Tipo de cruce
-
-individuo = # Mapeo del individuo
-gen = # Mapeo del gen
-tgenes = # Numero genes
-
-
 class Gen:
+    """Esto es una clase generica que representa un gen, hay que reescribir esta la estructura generica 
+    por lo que se entienda que es un gen en el problema dado.
+    El init será la función que genere un gen aleatorio. Hay que escribirla.
+    """
+    # Nuevo gen Aleatorio
     def __init__(self):
-        # Nuevo gen Aleatorio
+        pass
 
-class Individuo(BaseClassName):
-    global tgenes
-    def __init__(self):
+    def mutar(self):
+        self.__init__()
+
+class Individuo():
+    """Esta clase generica representa al individuo, que es una coleccion de genes. 
+    Es la definición del gen lo que hace que un individuo sea una partición de la pizza,
+    distribucion de videos de youtube, una secuencia de comandos de impresion, etc.
+    Hay que definir la evaluación reescribiendo evaluar.
+    """
+    #global ngenes
+    def __init__(self,GENETIC_CONFIG):
+        self.conf = GENETIC_CONFIG
         self.score = 0
         self.genes = {}
-        for j in range(tgenes):
-            self.genes[j] = Gen()
+        for j in range(self.conf.ngenes):
+            self.genes[j] = self.conf.gencls()
 
     def evaluar(self):
         self.score = 0
-        # TODO
+        #for i in range(ngenes):
+        #    self.score +=self.genes[i].video
 
-    def mutarGen(self):
-        for i in range(tgenes):
-            if random() >= 0.99: #TODO No hacerlo hardcoded
-                self.genes[i] = Gen()
+    #def mutarGen(self):
+       # random.choice(self.genes) = Gen()
+    
+    def irradiar(self):
+        for i in range(self.conf.ngenes):
+            if random() <= self.conf.pmutacion:
+                self.genes[i].mutar()
 
 class Pool:
-    global maxgenest,pcruze,tgenes,pmutacion,tpob
-    def __init__(self):
+    """La piscina, la población y su gestión AKA algoritmo genético.
+    Esta clase en teoria no necesita ser tocada para crear un algoritmo genético,
+    solo las clases Inviduo y Gen. Esta clase lo unico que necesita es la clase GENETIC_CONFIG
+    como parámetro, que es una serie de atributos de configuración nada mas.
+
+    class GENETIC_CONFIG:
+        gencls = Instruccion # Clase Gen
+        individuocls = Impresion # Clase Individuo
+        tpob = 20 # Tamaño de la población (Numero par plz)
+        maxgenest = 100 # Número máximo de generaciones estancadas
+        pmutacion = 0.5 # Probabilidad de mutacion
+        pcruze = 0.5 # Probabilidad de cruze
+        ngenes = 10 # Numero genes
+    """
+    def __init__(self,GENETIC_CONFIG):
+        self.conf = GENETIC_CONFIG
+        #self.individuocls = IndividuoCls
         self.estancadas = 0
         self.generaciones = 0
-        self.best = Program()
+        self.best = self.conf.individuocls(GENETIC_CONFIG)
         self.previouspool = {}
-        self.pool = {} # Población, lista de programas.
-        self.pmv = pmutacion
-        for i in range(tpob):
-            self.previouspool[i] = Program()
-        self.evaluar()
+        self.pool = {} # Población que juega, la mitad de previous pool.
+        self.pmv = self.conf.pmutacion # Probabilidad de mutacion variable
+        for i in range(self.conf.tpob):
+            self.previouspool[i] = self.conf.individuocls(GENETIC_CONFIG) # Precargamos de individuos todo
+        self.evaluar() # Evaluacion inicial
 
     def evaluar(self):
         for i in range(len(self.pool)):
-            self.pool[i].evaluar()
-            if (self.pool[i].score > self.best.score):
+            self.pool[i].evaluar() # evaluamos cada individuo
+            if (self.pool[i].score > self.best.score): # Si es mejor individuo que el mejor...
                 self.best = self.pool[i]
                 self.estancadas = 0
 
+    # Arquitectura de un algoritmo genético.
     def doSearch(self):
         print("Generación "+str(self.generaciones)+ "Score máximo: "+str(self.best.score))
         while (self.convergencia()):
@@ -71,19 +91,18 @@ class Pool:
                # print(str(self.pool[1].m[i]))
 
     def convergencia(self):
-        if self.estancadas >= maxgenest:
-            print("Programa:")
+        """Comprueba si hay convergencia (suficientes generaciones estancadas)
+        e imprime el resultado
+        """
+        if self.estancadas >= self.conf.maxgenest:
+            print("Genes finales del mejor alcanzado al converger:")
             for i in range(len(self.best.genes)):
                 print(self.best.genes[i])
-            print("Memoria:")
-            self.best.evaluarfinal()
-            for i in range(len(self.best.m)):
-                print(str(self.best.m[i]))
             return False
         return True
 
-    # Selección fija de la mitad mejor
     def seleccionar(self):
+        """Selección fija de la mitad mejor. Desde previouspool a pool"""
         # ordenar programas por score
         # sorted(self.previouspool, key=lambda program: program.score, reverse=True)
         # sorted(self.previouspool, key=(self.previouspool.get).score())
@@ -94,14 +113,17 @@ class Pool:
             self.pool[i] = copy.copy(ppl[i])
 
     def cruzar(self):
+        """Cruce de los seleccionados entre si. No generan hijos, sino que cada individuo
+        puede recombinarse con otro con pcruze probabilidad. No es el mejor cruze. Ya.
+        """
         # Es una permutacion? -> Grafo
         # De momento por un punto
         for i in range(len(self.pool)):
-            if random() >= pcruze:
-                j = randint(0,int(tpob/2)-1) # pareja
-                k = randint(0,tgenes) #pto cruze
-                while k < tgenes:
-                    self.pool[i].genes[k], self.pool[j].genes[k] = self.pool[j].genes[k],self.pool[i].genes[k]
+            if random() <= self.conf.pcruze:
+                j = randint(0,int(self.conf.tpob/2)-1) # pareja
+                k = randint(0,self.conf.ngenes) #pto cruze
+                while k < self.conf.ngenes:
+                    self.pool[i].genes[k], self.pool[j].genes[k] = self.pool[j].genes[k], self.pool[i].genes[k]
                     k += 1
 
     def mutarPoblacion(self):
@@ -109,21 +131,14 @@ class Pool:
         self.pmv = self.pmv + ((1 - self.pmv) / 200); # Mutación dinámica
         for i in range(len(self.pool)):
             if random() >= self.pmv:
-                mutarIndividuo(self.pool[i])
+                self.pool[i].irradiar()
 
-    def mutarIndividuo (self, individuo):
-        for i in range(tgenes):
-            if random() >= 0.99: #TODO No hacerlo hardcoded
-                individuo.genes[i].mutarGen()
 
     def combinar(self):
         # N primeros + n hijos
         # sorted(self.pool, key=lambda program: program.score, reverse=True)
         pl = sorted(self.pool.values(), key=operator.attrgetter('score'), reverse=True)
 
-        tpobhalf = int(tpob/2)
+        tpobhalf = int(self.conf.tpob/2)
         for i in range(tpobhalf):
             self.previouspool[tpobhalf+i] = pl[i]
-
-pool = Pool()
-pool.doSearch()
