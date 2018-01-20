@@ -96,8 +96,10 @@ class Pool:
         """
         if self.estancadas >= self.conf.maxgenest:
             print("Genes finales del mejor alcanzado al converger:")
-            for i in range(len(self.best.genes)):
-                print(self.best.genes[i])
+            self.best.exportar()
+            #for i in range(len(self.best.genes)):
+                #self.best.genes[i])
+                
             return False
         return True
 

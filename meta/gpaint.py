@@ -1,7 +1,9 @@
 from genetico import Individuo,Gen,Pool
 from random import randint, random
+from difflib import SequenceMatcher
 import filecmp
 import numpy as np
+#import pprint
 
 """Genetico aplicado al problema de painting"""
 r = 14
@@ -14,15 +16,18 @@ class Instruccion(Gen):
         #self.videos = [50, 50, 80, 30, 410]
         #self.video = self.videos[randint(0,4)]
         self.tipo = randint(0,2)
+        x = randint(0,c-1)
+        y = randint(0,r-1)
         if self.tipo == 0: #PRINT_SQUARE
-            x = randint(0,c-1)
-            y = randint(0,r-1)
             s = 0 # Es dificil controlar que el square no se valla de madre con la S
             self.p = [y,x,s] # parametros
         elif self.tipo == 1:# PRINT_LINE
-            self.p = [randint(0,r-1),randint(0,c-1),randint(0,r-1),randint(0,c-1)] # parametros
+            if randint(0,1) == 0:
+                self.p = [randint(0,r-1),x,randint(0,r-1),x] # parametros
+            else:
+                self.p = [y,randint(0,c-1),y,randint(0,c-1)] # parametros
         else: # ERASE
-            self.p = [randint(0,r-1),randint(0,c-1),randint(0,r-1),randint(0,c-1)] # parametros
+            self.p = [y,x] # parametros
     def mutar(self):
         self.__init__()
 
@@ -32,10 +37,25 @@ class Impresion(Individuo):
         self.score = 0
         #for i in range(self.conf.ngenes):
             #self.score +=self.genes[i].video
-        self.imprimir()
-        if self.validez():
-            self.score = r*c - self.conf.ngenes
-            self.exportar()
+        #self.imprimir()
+        self.renderizar()
+        #text1 = open('meta/in/logo.in').read()
+        #text2 = open('meta/out/impresion.out').read()
+        #m = SequenceMatcher(None, text1, text2)
+        #self.score = m.ratio()
+
+        for linea in range(len(self.conf.objetivo)):
+            for columna in range(len(self.conf.objetivo[linea])):
+                if self.conf.objetivo[linea][columna] == self.image[linea][columna]:
+                    self.score += 1
+                else:
+                    self.score -= 1
+
+        #self.imprimir()
+        #self.exportar()
+        #if self.validez():
+        #    self.score = r*c - self.conf.ngenes
+        #    self.exportar()
 
     def validez(self):
         return filecmp.cmp('meta/in/logo.in', 'meta/out/impresion.out') 
@@ -45,8 +65,8 @@ class Impresion(Individuo):
         lineasSalida = []
         i = 0
         while i < self.conf.ngenes:
-            i += 1
             gen = self.genes[i]
+            i += 1
             if gen.tipo == 0:
                 lineasSalida.append('PAINT_SQUARE {0} {1} {2}\n'.format(str(gen.p[0]), str(gen.p[1]), str(gen.p[2])))
             elif gen.tipo == 1:
@@ -58,9 +78,9 @@ class Impresion(Individuo):
         for x in lineasSalida:
             salida.write(x)
         salida.close()
+        self.imprimir()
 
-    def imprimir(self):
-        salida = open('meta/out/impresion.out', 'w')
+    def renderizar(self):
         a = np.zeros((c,r), dtype=bool)
         i = 0
         while i < self.conf.ngenes:
@@ -97,7 +117,12 @@ class Impresion(Individuo):
                                     #  R   C
                 a[gen.p[1]][gen.p[0]] = False
             i += 1
+        self.image = a
 
+    def imprimir(self):
+        self.renderizar()
+        salida = open('meta/out/impresion.out', 'w')
+        #pp.pprint(a)
         salida.write('{0} {1}\n'.format(str(r),str(c)))
 
         x = 0
@@ -105,7 +130,7 @@ class Impresion(Individuo):
 
         while y < r:
             while  x < c:
-                if a[x][y] == True:
+                if self.image[x][y] == True:
                     salida.write('#')
                 else:
                     salida.write('.')
@@ -121,11 +146,31 @@ class Impresion(Individuo):
 class GENETIC_CONFIG:
     gencls = Instruccion # Clase Gen
     individuocls = Impresion # Clase Individuo
-    tpob = 20 # Tamaño de la población (Numero par plz)
-    maxgenest = 10000 # Número máximo de generaciones estancadas
+    tpob = 40 # Tamaño de la población (Numero par plz)
+    maxgenest = 500 # Número máximo de generaciones estancadas
     pmutacion = 0.5 # Probabilidad de mutacion
     pcruze = 0.5 # Probabilidad de cruze
-    ngenes = 10 # Numero genes
+    ngenes = 100 # Numero genes
 
-pool = Pool(GENETIC_CONFIG)
+    objetivo = None
+
+    def __init__(self):
+        fichero = open('meta/in/logo.in', 'r')
+
+        datos = fichero.readline() #Esto coge el numero de filas y columnas
+        lineasFichero = fichero.readlines() # Esto coge el dibujo en si.
+
+        self.objetivo = np.zeros((c,r), dtype=bool)
+        # filas r=14
+        for columna in range(len(lineasFichero)):
+            for linea in range(len(lineasFichero[columna])-1):
+                if lineasFichero[columna][linea] == "#":
+                    self.objetivo[linea][columna] = True
+                else  :
+                    self.objetivo[linea][columna] = False
+        fichero.close()
+
+
+
+pool = Pool(GENETIC_CONFIG())
 pool.doSearch()
