@@ -22,10 +22,11 @@ class Individuo():
     #global ngenes
     def __init__(self,GENETIC_CONFIG):
         self.conf = GENETIC_CONFIG
-        self.score = 0
-        self.genes = {}
+        self.score = 0 # Rango de 0 a 1
+        self.genes = []
         for j in range(self.conf.ngenes):
-            self.genes[j] = self.conf.gencls()
+            self.genes.append(self.conf.gencls())
+        self.evaluar()
 
     def evaluar(self):
         self.score = 0
@@ -61,12 +62,12 @@ class Pool:
         self.estancadas = 0
         self.generaciones = 0
         self.best = self.conf.individuocls(GENETIC_CONFIG)
-        self.previouspool = {}
-        self.pool = {} # Población que juega, la mitad de previous pool.
+        self.previouspool = []
+        self.pool = [] # Población que juega, la mitad de previous pool.
         self.pmv = self.conf.pmutacion # Probabilidad de mutacion variable
         for i in range(self.conf.tpob):
-            self.previouspool[i] = self.conf.individuocls(GENETIC_CONFIG) # Precargamos de individuos todo
-        self.evaluar() # Evaluacion inicial
+            self.previouspool.append(self.conf.individuocls(GENETIC_CONFIG)) # Precargamos de individuos todo
+        #self.evaluar() # Evaluacion inicial
 
     def evaluar(self):
         for i in range(len(self.pool)):
@@ -74,6 +75,11 @@ class Pool:
             if (self.pool[i].score > self.best.score): # Si es mejor individuo que el mejor...
                 self.best = self.pool[i]
                 self.estancadas = 0
+                self.pmv = self.conf.pmutacion
+                print(self.best)
+                self.imprimir()
+    def imprimir(self):
+        pass
 
     # Arquitectura de un algoritmo genético.
     def doSearch(self):
@@ -82,9 +88,11 @@ class Pool:
             self.generaciones += 1
             self.estancadas += 1
             self.seleccionar()
+            #self.seleccion_rango()
             self.cruzar()
             self.mutarPoblacion()
             self.evaluar()
+            #self.combinar_simple()
             self.combinar()
             print("Generación "+str(self.generaciones)+ "Score máximo: "+str(self.best.score))
             #for i in range(len(self.pool[1].m)):
@@ -103,16 +111,32 @@ class Pool:
             return False
         return True
 
+    def seleccion_rango(self):
+        self.previouspool.sort(key=operator.attrgetter('score'), reverse=True)
+        self.pool = []
+        n = self.conf.tpob
+        while len(self.pool) != len(self.previouspool):
+            for i, individuo in enumerate(self.previouspool):
+                p_i = ((2*(n-i+1)) / (n**2 + n))
+                if random() <= p_i:
+                    #p(i) = (2(n-i+1)) / (n**2 + n)
+                    self.pool.append(copy.deepcopy(self.previouspool[i]))
+                if len(self.pool) == len(self.previouspool):
+                    break
+
+
     def seleccionar(self):
-        """Selección fija de la mitad mejor. Desde previouspool a pool"""
+        """Selección fija de la mitad mejor. Desde previouspool a pool
+        NO FUNCA"""
         # ordenar programas por score
         # sorted(self.previouspool, key=lambda program: program.score, reverse=True)
         # sorted(self.previouspool, key=(self.previouspool.get).score())
-        ppl = sorted(self.previouspool.values(), key=operator.attrgetter('score'), reverse=True)
-        self.pool = {}
+        #self.previouspool = sorted(self.previouspool.values(), key=operator.attrgetter('score'), reverse=True)
+        self.previouspool.sort(key=operator.attrgetter('score'), reverse=True)
+        self.pool = []
         #Elegir n primeros
         for i in range(int(len(self.previouspool)/2)):
-            self.pool[i] = copy.copy(ppl[i])
+            self.pool.append(copy.deepcopy(self.previouspool[i]))
 
     def cruzar(self):
         """Cruce de los seleccionados entre si. No generan hijos, sino que cada individuo
@@ -121,26 +145,33 @@ class Pool:
         # Es una permutacion? -> Grafo
         # De momento por un punto
         for i in range(len(self.pool)):
-            if random() <= self.conf.pcruze:
-                j = randint(0,int(self.conf.tpob/2)-1) # pareja
-                k = randint(0,self.conf.ngenes) #pto cruze
-                while k < self.conf.ngenes:
-                    self.pool[i].genes[k], self.pool[j].genes[k] = self.pool[j].genes[k], self.pool[i].genes[k]
-                    k += 1
+            #if random() <= self.conf.pcruze*self.pool[i].score:
+            j = randint(0,int(self.conf.tpob/2)-1) # pareja
+            k = randint(0,self.conf.ngenes) #pto cruze
+            while k < self.conf.ngenes:
+                self.pool[i].genes[k], self.pool[j].genes[k] = copy.deepcopy(self.pool[j].genes[k]), copy.deepcopy(self.pool[i].genes[k])
+                k += 1
 
     def mutarPoblacion(self):
         # Sobre el programa
-        self.pmv = self.pmv + ((1 - self.pmv) / 200); # Mutación dinámica
+        self.pmv = self.pmv + ((1 - self.pmv) / 2000); # Mutación dinámica
+        #print(self.pmv)
         for i in range(len(self.pool)):
-            if random() >= self.pmv:
                 self.pool[i].irradiar()
 
-
+    def combinar_simple(self):
+        self.previouspool = copy.deepcopy(self.pool)
+        print(self.previouspool)
+    
     def combinar(self):
         # N primeros + n hijos
         # sorted(self.pool, key=lambda program: program.score, reverse=True)
-        pl = sorted(self.pool.values(), key=operator.attrgetter('score'), reverse=True)
+        #pl = sorted(self.pool.values(), key=operator.attrgetter('score'), reverse=True)
+        self.pool.sort(key=operator.attrgetter('score'), reverse=True)
 
         tpobhalf = int(self.conf.tpob/2)
-        for i in range(tpobhalf):
-            self.previouspool[tpobhalf+i] = pl[i]
+        for i in range(tpobhalf-1):
+            self.previouspool[tpobhalf+i] = copy.deepcopy(self.pool[i])
+
+        print(self.previouspool)
+
