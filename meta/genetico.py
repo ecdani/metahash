@@ -173,5 +173,5 @@ class Pool:
         for i in range(tpobhalf-1):
             self.previouspool[tpobhalf+i] = copy.deepcopy(self.pool[i])
 
-        print(self.previouspool)
+        #print(self.previouspool)
 

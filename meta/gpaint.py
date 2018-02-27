@@ -15,7 +15,7 @@ class Instruccion(Gen):
         global r,c
         #self.videos = [50, 50, 80, 30, 410]
         #self.video = self.videos[randint(0,4)]
-        self.tipo = randint(0,2)
+        self.tipo = 1 #randint(0,2)
         x = randint(0,c-1)
         y = randint(0,r-1)
         if self.tipo == 0: #PRINT_SQUARE
@@ -39,7 +39,7 @@ class Impresion(Individuo):
             #self.score +=self.genes[i].video
         #self.imprimir()
         self.renderizar()
-        #text1 = open('meta/in/logo.in').read()
+        #text1 = open('meta/in/dumb.in').read()
         #text2 = open('meta/out/impresion.out').read()
         #m = SequenceMatcher(None, text1, text2)
         #self.score = m.ratio()
@@ -48,8 +48,9 @@ class Impresion(Individuo):
             for columna in range(len(self.conf.objetivo[linea])):
                 if self.conf.objetivo[linea][columna] == self.image[linea][columna]:
                     self.score += 1
-                else:
-                    self.score -= 1
+        #self.score -= len(self.genes)
+        self.score = self.score/1120 # Normalizada
+
 
         #self.imprimir()
         #self.exportar()
@@ -88,8 +89,9 @@ class Impresion(Individuo):
             if gen.tipo == 0:
                 # a.append('PAINT_SQUARE {0} {1} {2}\n'.format(str(gen.p[0]), str(gen.p[1]), str(gen.p[2])))
                                         #R    C   S
-                x  = gen.p[1] - gen.p[2]
-                y  = gen.p[0] - gen.p[2] 
+                a[gen.p[1]][gen.p[0]] = True
+                '''x  = gen.p[1] - gen.p[2]
+                y  = gen.p[0] - gen.p[2]
                 xf = gen.p[1] + gen.p[2]
                 yf = gen.p[0] + gen.p[2]
 
@@ -98,7 +100,7 @@ class Impresion(Individuo):
                         a[x][y] = True
                         y += 1
                     y = gen.p[0] - gen.p[2]
-                    x += 1
+                    x += 1'''
 
             elif gen.tipo == 1:
                 #a.append('PAINT_LINE {0} {1} {2} {3}\n'.format(str(gen.p[0]), str(gen.p[1]), str(gen.p[2]), str(gen.p[3])))
@@ -147,8 +149,8 @@ class GENETIC_CONFIG:
     gencls = Instruccion # Clase Gen
     individuocls = Impresion # Clase Individuo
     tpob = 40 # Tamaño de la población (Numero par plz)
-    maxgenest = 500 # Número máximo de generaciones estancadas
-    pmutacion = 0.5 # Probabilidad de mutacion
+    maxgenest = 1000 # Número máximo de generaciones estancadas
+    pmutacion = 0.1 # Probabilidad de mutacion
     pcruze = 0.5 # Probabilidad de cruze
     ngenes = 100 # Numero genes
 
