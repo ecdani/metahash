@@ -14,7 +14,7 @@ class Problema:
     '''
     rows y columns
     '''
-    def __init__(self,fil,col,coch,viaj,bon,pas):
+    def __init__(self,fil,col,coch,viaj,bon,pas,listViaj):
         # Parsear archivo
         self.filas = fil
         self.columnas = col 
@@ -22,6 +22,7 @@ class Problema:
         self.viajes = viaj
         self.bonus = bon
         self.pasos = pas
+        self.listaViajes = listViaj
 
     def parsear_archivo(self):
         pass
