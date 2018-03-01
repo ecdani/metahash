@@ -27,6 +27,12 @@ class Problema:
         self.listaViajes = listViaj
         self.listaCoches = []
 
+    def comprobarFin(self):
+        for coche in self.listaCoches:
+            if coche.fin == False:
+                return False
+        return True
+
     def escribir_viaje(self):
         """
         c = Coche()
@@ -43,7 +49,7 @@ class Problema:
         self.listaCoches.append(c2)
         """
 
-        fichero = open('out/a_example.out','w')
+        fichero = open('out/e_high_bonus.out','w')
         salida = []
         for coche in self.listaCoches:
             cadena = str(len(coche.viajesRecorridos))
@@ -107,9 +113,10 @@ class Coche:
                     self.viajesRecorridos.append(i)
                     viaje.recorrido = True
                     #turnosUsados = turnosUsados + viaje.turnoFin
-                    print('El coche ' + str(self.numero) + ' ha sido asignado con el viaje ' + str(i))
+                    #print('El coche ' + str(self.numero) + ' ha sido asignado con el viaje ' + str(i))
                     return turnos
         self.fin = True
+        #problem.comprobarFin()
         return 0
 
     '''
@@ -149,27 +156,39 @@ class Coche:
 
 def main():
     #problem = parse("C:/Users/dani/git/metahash/defcom18/input/a_example.in",s,globals())
-    problem = parse("input/a_example.in",s,globals())
+    problems = []
+    problems.append(parse("input/a_example.in",s,globals()))
+    problems.append(parse("input/b_should_be_easy.in",s,globals()))
+    problems.append(parse("input/c_no_hurry.in",s,globals()))
+    problems.append(parse("input/d_metropolis.in",s,globals()))
+    problems.append(parse("input/e_high_bonus.in",s,globals()))
 
-    # crear coches
-    problem.listaCoches = []
-    for i in range(0, problem.coches):
-        problem.listaCoches.append(Coche(i));
+    for x, problem in problems:
+        print('comienzo problema' + str(x))
+        # crear coches
+        problem.listaCoches = []
+        for i in range(0, problem.coches):
+            problem.listaCoches.append(Coche(i));
 
-    # Bucle de turnos - deprecated
-    #for i in range(0, problem.pasos):
-    # Bucle de coches
-    for coche in problem.listaCoches:
+        # Bucle de turnos - deprecated
+        #for i in range(0, problem.pasos):
         turnosUsados = 0
-        while turnosUsados < problem.pasos and coche.fin == False:
-        #if coche.libre:
-            # asignar nuevo viaje
-            turnosUsados = turnosUsados + coche.asignarViaje(problem.listaViajes, problem.pasos)
-            print(turnosUsados)
-        # avanzar
-        #coche.accion()
-        #print('Turno ' + str(i) + ' - el coche ' + str(coche.numero) + ' se mueve')
-    problem.escribir_viaje()
+        while problem.comprobarFin() == False:
+            # Bucle de coches
+            for coche in problem.listaCoches:
+                if coche.fin == False:
+
+                #if coche.libre:
+                    # asignar nuevo viaje
+                    coche.turnosUsados = turnosUsados + coche.asignarViaje(problem.listaViajes, problem.pasos)
+                    if coche.turnosUsados > problem.pasos:
+                        coche.fin = True
+                    #print(turnosUsados)
+                # avanzar
+                #coche.accion()
+                #print('Turno ' + str(i) + ' - el coche ' + str(coche.numero) + ' se mueve')
+
+        problem.escribir_viaje()
 
 if __name__ == '__main__':
     sys.exit(main())
