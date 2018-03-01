@@ -16,4 +16,36 @@ CantsProd = *Int
 
 # Zona de las clases
 
-problem = parse("parse/redundancy.in",s,globals())
+import sys
+
+class Problema:
+    '''
+    rows y columns
+    '''
+    def __init__(self):
+        # Parsear archivo
+
+    def parsear_archivo:
+        pass
+
+    def escribir_archivo:
+        pass
+
+class Viaje:
+    '''
+    '''
+    def __init__(self):
+        pass
+
+class Coche:
+    '''
+    '''
+    def __init__(self):
+        self.x = 0
+        self.y = 0
+
+def main():
+    problem = parse("input/redundancy.in",s,globals())
+
+if __name__ == '__main__':
+    sys.exit(main())
