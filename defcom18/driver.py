@@ -42,20 +42,43 @@ class Viaje:
         self.yFin = yf
         self.turnoInicio = ti
         self.turnoFin = tf
+        self.recorrido = False
 
 class Coche:
     '''
     '''
-    def __init__(self):
+    def __init__(self, numero):
+        self.numero = numero
         self.x = 0
         self.y = 0
-        self.viajesRecorridos = 0
+        self.viajesRecorridos = []
         self.libre = True
+        self.fin = False
 
-    def asignarViaje(self, viaje):
-        self.viaje = viaje
-        self.libre = False
+    def calcularDistancia(self, xInicio, yInicio, xDestino, yDestino):
+        return (xInicio - xDestino) + (yInicio - yDestino)
 
+    def comprobarDistancia(self, viaje, turnos):
+        distancia = self.calcularDistancia(self.x, self.y, viaje.xInicio, viaje.yInicio) + self.calcularDistancia(viaje.xInicio, viaje.yInicio, viaje.xFin, viaje.yFin)
+        if distancia > turnos:
+            return False
+        else:
+            return distancia
+
+    def asignarViaje(self, listaViajes):
+        turnosUsados = 0
+        for i, viaje in enumerate(listaViajes):
+            turnosDisp = viaje.turnoFin - turnosUsados
+            turnos = self.comprobarDistancia(viaje, turnosDisp)
+            if viaje.recorrido == False and turnos != False:
+                #self.viaje = viaje
+                self.viajesRecorridos.append(i)
+                turnosUsados = turnosUsados + viaje.turnoFin
+                print('El coche ' + str(self.numero) + ' ha sido asignado con el viaje ' + str(i))
+                return
+        self.fin = True
+
+    '''
     def accion(self, tipoViaje = 'inicio'):
         if tipoViaje == 'inicio':
             xDestino = self.viaje.xInicio
@@ -77,6 +100,10 @@ class Coche:
                 self.accion(tipoViaje)
             else:
                 self.libre = True
+    '''
+    def accion(self):
+
+        pass
 
     def avanzar(self, coordCoche, coordViaje):
         # comprobar orientación
@@ -93,20 +120,19 @@ def main():
     # crear coches
     problem.listaCoches = []
     for i in range(0, problem.coches):
-        problem.listaCoches.append(Coche());
+        problem.listaCoches.append(Coche(i));
 
-    # Bucle de turnos
-    nViaje = 0
-    for i in range(0, problem.pasos):
-        # Bucle de coches
-        for coche in problem.listaCoches:
-            if coche.libre:
-                # asignar nuevo viaje
-                coche.asignarViaje(problem.listaViajes[nViaje])
-                nViaje = nViaje + 1
-            else:
-                # avanzar
-                coche.accion()
+    # Bucle de turnos - deprecated
+    #for i in range(0, problem.pasos):
+    # Bucle de coches
+    for coche in problem.listaCoches:
+        while coche.fin == False:
+        #if coche.libre:
+            # asignar nuevo viaje
+            coche.asignarViaje(problem.listaViajes)
+        # avanzar
+        #coche.accion()
+        #print('Turno ' + str(i) + ' - el coche ' + str(coche.numero) + ' se mueve')
 
 if __name__ == '__main__':
     sys.exit(main())
