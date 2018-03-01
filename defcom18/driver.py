@@ -1,7 +1,7 @@
 from gcode17 import parse
 
 s = """
-Main = Int Int Int Int Int Int -> 3@viaje | Problema
+Main = Int Int Int Int Int Int -> 4@viaje | Problema
 viaje = Int Int Int Int Int Int | Viaje
 """
 
@@ -49,7 +49,8 @@ class Coche:
         self.y = 0
 
 def main():
-    problem = parse("input/a_example.in",s,globals())
+    #problem = parse("C:/Users/dani/git/metahash/defcom18/input/a_example.in",s,globals())
+    problem = parse("defcom18/input/a_example.in",s,globals())
     print('hey')
 
 if __name__ == '__main__':
