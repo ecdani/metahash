@@ -43,19 +43,19 @@ class Problema:
         self.listaCoches.append(c2)
         """
 
-        fichero = open('defcom18/out/a_example.out','w')
+        fichero = open('out/a_example.out','w')
         salida = []
         for coche in self.listaCoches:
             cadena = str(len(coche.viajesRecorridos))
-            
+
             for viaje in coche.viajesRecorridos:
                 cadena += " " + str(viaje)
 
             salida.append(cadena + "\n")
-        
+
         for x in salida:
             fichero.write(x)
-        
+
         fichero.close()
 
     def parsear_archivo(self):
@@ -85,29 +85,29 @@ class Coche:
         self.y = 0
         self.viajesRecorridos = []
         self.libre = True
-        self.fin = False
+        self.turnosUsados = 0
 
     def calcularDistancia(self, xInicio, yInicio, xDestino, yDestino):
         return (xInicio - xDestino) + (yInicio - yDestino)
 
-    def comprobarDistancia(self, viaje, turnos):
+    def comprobarDistancia(self, viaje):
         distancia = self.calcularDistancia(self.x, self.y, viaje.xInicio, viaje.yInicio) + self.calcularDistancia(viaje.xInicio, viaje.yInicio, viaje.xFin, viaje.yFin)
-        if distancia > turnos:
+        if abs(distancia) > viaje.turnoFin:
             return False
         else:
-            return distancia
+            return abs(distancia)
 
-    def asignarViaje(self, listaViajes):
-        turnosUsados = 0
+    def asignarViaje(self, listaViajes, totalTurnos):
         for i, viaje in enumerate(listaViajes):
-            turnosDisp = viaje.turnoFin - turnosUsados
-            turnos = self.comprobarDistancia(viaje, turnosDisp)
-            if viaje.recorrido == False and turnos != False:
+            turnos = self.comprobarDistancia(viaje)
+            if viaje.recorrido == False and turnos != False :
                 #self.viaje = viaje
-                self.viajesRecorridos.append(i)
-                turnosUsados = turnosUsados + viaje.turnoFin
-                print('El coche ' + str(self.numero) + ' ha sido asignado con el viaje ' + str(i))
-                return
+                if self.turnosUsados + turnos < totalTurnos:
+                    self.viajesRecorridos.append(i)
+                    viaje.recorrido = True
+                    #turnosUsados = turnosUsados + viaje.turnoFin
+                    print('El coche ' + str(self.numero) + ' ha sido asignado con el viaje ' + str(i))
+                    return turnos
         self.fin = True
 
     '''
@@ -147,7 +147,7 @@ class Coche:
 
 def main():
     #problem = parse("C:/Users/dani/git/metahash/defcom18/input/a_example.in",s,globals())
-    problem = parse("defcom18/input/a_example.in",s,globals())
+    problem = parse("input/a_example.in",s,globals())
     problem.escribir_viaje()
 
     # crear coches
@@ -159,10 +159,12 @@ def main():
     #for i in range(0, problem.pasos):
     # Bucle de coches
     for coche in problem.listaCoches:
-        while coche.fin == False:
+        turnosUsados = 0
+        while turnosUsados < problem.pasos:
         #if coche.libre:
             # asignar nuevo viaje
-            coche.asignarViaje(problem.listaViajes)
+            turnosUsados = turnosUsados + coche.asignarViaje(problem.listaViajes, problem.pasos)
+            print(turnosUsados)
         # avanzar
         #coche.accion()
         #print('Turno ' + str(i) + ' - el coche ' + str(coche.numero) + ' se mueve')
