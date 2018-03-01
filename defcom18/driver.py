@@ -1,7 +1,7 @@
 from gcode17 import parse
 
 s = """
-Main = Int Int Int Int Int Int -> 3@viaje | Problema
+Main = Int Int Int Int Int Int -> 4@viaje | Problema
 viaje = Int Int Int Int Int Int | Viaje
 """
 
@@ -23,6 +23,21 @@ class Problema:
         self.bonus = bon
         self.pasos = pas
         self.listaViajes = listViaj
+
+	def escribir_viaje(self,c,v):
+		fichero = open('defcom18/out/a_example.out','w')
+		salida = []
+		for coche in self.listaCoches:
+			cadena = str(len(coche.viajesRecorridos))
+			
+			for viaje in coche.viajesRecorridos:
+				cadena += str(viaje)
+				salida.append(cadena + "\n")
+		
+		for x in salida:
+			fichero.write(x)
+		
+		fichero.close()
 
     def parsear_archivo(self):
         pass
@@ -49,7 +64,7 @@ class Coche:
         self.y = 0
 
 def main():
-    problem = parse("input/a_example.in",s,globals())
+    problem = parse("defcom18/input/a_example.in",s,globals())
     print('hey')
 
 if __name__ == '__main__':
