@@ -25,6 +25,38 @@ class Problema:
         self.bonus = bon
         self.pasos = pas
         self.listaViajes = listViaj
+        self.listaCoches = []
+
+    def escribir_viaje(self):
+        """
+        c = Coche()
+        c.viajesRecorridos.append(1)
+        c.viajesRecorridos.append(2)
+        c.viajesRecorridos.append(3)
+        c.viajesRecorridos.append(4)
+
+        c2 = Coche()
+        c2.viajesRecorridos.append(5)
+        c2.viajesRecorridos.append(6)
+
+        self.listaCoches.append(c)
+        self.listaCoches.append(c2)
+        """
+
+        fichero = open('defcom18/out/a_example.out','w')
+        salida = []
+        for coche in self.listaCoches:
+            cadena = str(len(coche.viajesRecorridos))
+            
+            for viaje in coche.viajesRecorridos:
+                cadena += " " + str(viaje)
+
+            salida.append(cadena + "\n")
+        
+        for x in salida:
+            fichero.write(x)
+        
+        fichero.close()
 
     def parsear_archivo(self):
         pass
@@ -115,7 +147,8 @@ class Coche:
 
 def main():
     #problem = parse("C:/Users/dani/git/metahash/defcom18/input/a_example.in",s,globals())
-    problem = parse("input/a_example.in",s,globals())
+    problem = parse("defcom18/input/a_example.in",s,globals())
+    problem.escribir_viaje()
 
     # crear coches
     problem.listaCoches = []
