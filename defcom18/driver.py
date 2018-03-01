@@ -86,6 +86,7 @@ class Coche:
         self.viajesRecorridos = []
         self.libre = True
         self.turnosUsados = 0
+        self.fin = False
 
     def calcularDistancia(self, xInicio, yInicio, xDestino, yDestino):
         return (xInicio - xDestino) + (yInicio - yDestino)
@@ -109,6 +110,7 @@ class Coche:
                     print('El coche ' + str(self.numero) + ' ha sido asignado con el viaje ' + str(i))
                     return turnos
         self.fin = True
+        return 0
 
     '''
     def accion(self, tipoViaje = 'inicio'):
@@ -148,7 +150,6 @@ class Coche:
 def main():
     #problem = parse("C:/Users/dani/git/metahash/defcom18/input/a_example.in",s,globals())
     problem = parse("input/a_example.in",s,globals())
-    problem.escribir_viaje()
 
     # crear coches
     problem.listaCoches = []
@@ -160,7 +161,7 @@ def main():
     # Bucle de coches
     for coche in problem.listaCoches:
         turnosUsados = 0
-        while turnosUsados < problem.pasos:
+        while turnosUsados < problem.pasos and coche.fin == False:
         #if coche.libre:
             # asignar nuevo viaje
             turnosUsados = turnosUsados + coche.asignarViaje(problem.listaViajes, problem.pasos)
@@ -168,6 +169,7 @@ def main():
         # avanzar
         #coche.accion()
         #print('Turno ' + str(i) + ' - el coche ' + str(coche.numero) + ' se mueve')
+    problem.escribir_viaje()
 
 if __name__ == '__main__':
     sys.exit(main())
