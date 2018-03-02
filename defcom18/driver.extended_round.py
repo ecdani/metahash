@@ -48,18 +48,28 @@ class Problema:
 class Viaje:
     '''
     '''
-    def __init__(self,xi,yi,xf,yf,ti,tf):
+    def __init__(self,xi,yi,xd,yd,ti,tf):
+        self.n = 0
         self.xi = xi
         self.yi = yi
-        self.xFin = xf
-        self.yFin = yf
+        self.xd = xd
+        self.yd = yd
         self.turnoInicio = ti
         self.turnoFin = tf
         self.recorrido = False
         self.tiempoCocheAsignado = 0
+
+        self.dtiempo = 0 # Distancia temporal
+        self.dtrayecto = 0 # Distancia espacial
+    
     
     def __str__(self):
         return str(self.n)
+
+    def evaluar(self, turnoActual):
+        self.dtrayecto = abs(self.xi - self.xd) + abs(self.yi - self.yd)
+        self.dtiempo = self.turnoInicio - turnoActual
+
 
 class Coche:
     '''
@@ -69,19 +79,23 @@ class Coche:
         self.x = 0
         self.y = 0
         self.viajesRecorridos = []
-        self.libre = True
-        self.turnosUsados = 0
-        self.fin = False
-        self.tiempo = 0
+        self.tiempoNec = 0
+        self.turno = 0 # turno actual en el que está el coche
     
+    def addViaje(self, v):
+        self.viajesRecorridos.append(v)
+        self.turno += self.tiempoNec
+        self.x = v.xd
+        self.y = v.yd
 
     def dist(self, xi, yi, xd, yd):
-        return abs(xi - xd) + abs(yi - yd)
+        return (abs(xi - xd) + abs(yi - yd))
 
     def evaluar(self, v):
-        self.tiempo = self.dist(self.x, self.y, v.xi, v.yi) + self.dist(v.xi, v.yi, v.xFin, v.yFin)
-        for vr in  self.viajesRecorridos:
-            self.tiempo += vr.tiempoCocheAsignado
+        self.tiempoNec = self.dist(self.x, self.y, v.xi, v.yi) + v.dtrayecto # tiempo necesario
+        self.tiempoDisp = v.turnoFin - self.turno # tiempo disponible
+
+        self.ventanaOportunidad = self.tiempoDisp - self.tiempoNec # disponible - necesario, si es positivo se puede hacer, sino no.
 
 
 def solver(problem):
@@ -90,14 +104,24 @@ def solver(problem):
     for i in range(0, problem.coches):
         problem.listaCoches.append(Coche(i))
 
-    for i, v in enumerate(problem.listaViajes):
-        v.n = i
-        for c in problem.listaCoches:
-            c.evaluar(v)
-        problem.listaCoches.sort(key=attrgetter('tiempo'), reverse=False)
+    for j, v in enumerate(problem.listaViajes):
+        v.n = j
+        v.evaluar(0)
+    problem.listaViajes.sort(key=attrgetter('dtiempo'), reverse=False) # de menos a mas
 
-        v.tiempoCocheAsignado = c.tiempo
-        problem.listaCoches[0].viajesRecorridos.append(v)
+    for k, w in enumerate(problem.listaViajes):
+        for c in problem.listaCoches:
+            w.evaluar(c.turno)
+            c.evaluar(w)
+        problem.listaCoches.sort(key=attrgetter('ventanaOportunidad'), reverse=False) # de menos a mas
+
+        l=0
+        while  l < len(problem.listaCoches) and problem.listaCoches[l].ventanaOportunidad < 0:
+            l += 1
+        
+        if not(l >= len(problem.listaCoches)):
+            problem.listaCoches[i].addViaje(problem.listaViajes.pop(i))
+
 
 
 def main():
@@ -107,6 +131,7 @@ def main():
         problem = parse("defcom18/input/"+f+".in",s,globals())
         solver(problem)
         problem.escribir_viaje(f)
+        print f+ "resolved"
 
 
 if __name__ == '__main__':
