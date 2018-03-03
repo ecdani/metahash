@@ -72,21 +72,10 @@ class Problema:
                         self.score += v.dtrayecto
         print " Score solucion: " + str(self.score),
 
-        '''
-        A - example         8
-        B - should be easy  88.305 
-        C - no hurry        8.371.568
-        D - metropolis      3.968.960
-        E - high bonus      10.721.018
-        '''
-
     def solve(self):
 
         for j, v in enumerate(self.listaViajes):  # Asignar ids
             v.n = j
-            if (v.inviable()):
-                self.listaViajes.pop(j)
-                print "Inviables!"
         initial_lenght = len(self.listaViajes)
 
         self.listaViajes = sorted(self.listaViajes, key=attrgetter('dtrayecto'), reverse=True)  # de menos a mas
@@ -140,12 +129,6 @@ class Viaje:
     def addCoche(self, coche):
         self.coche = coche
 
-    def inviable(self):
-        if (self.turnoFin-self.turnoInicio) < self.dtrayecto:
-            return True
-        else:
-            return False
-
     def __str__(self):
         return str(self.n)
 
@@ -163,7 +146,7 @@ class Coche:
 
     def addViaje(self, v):
         self.viajesRecorridos.append(v)
-        self.turno += (self.dist(self.x, self.y, v.xi, v.yi) + v.dtrayecto)
+        self.turno += (dist_ef(self, v) + v.dtrayecto)
         self.x = v.xd
         self.y = v.yd
 
