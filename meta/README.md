@@ -57,4 +57,4 @@ Y a funcionar.
 
 ## Ejemplo
 
-Evolucionar una cadena de texto: [`metahash/meta/ghello.py`](metahash/meta/ghello.py)
+Evolucionar una cadena de texto: [`ghello.py`](metahash/meta/ghello.py)
