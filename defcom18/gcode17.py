@@ -8,15 +8,15 @@ def primitive(type):
 	elif type == "String":
 		return str
 	elif type == "*Int":
-		return lambda x: map(int, filter(lambda y: len(y) > 0, x.split(' ')))
+		return lambda x: list(map(int, [y for y in x.split(' ') if len(y) > 0]))
 	elif type == "*Float":
-		return lambda x: map(float, filter(lambda y: len(y) > 0, x.split(' ')))
+		return lambda x: list(map(float, [y for y in x.split(' ') if len(y) > 0]))
 	elif type == "*String":
-		return lambda x: map(str, filter(lambda y: len(y) > 0, x.split(' ')))
+		return lambda x: list(map(str, [y for y in x.split(' ') if len(y) > 0]))
 
 def parse(src, struct, funcs):
 	funcs['identity'] = lambda x: x
-	return recparse(list(file(src)), structure(funcs, struct), 'Main')[1]
+	return recparse(list(open(src,'r')), structure(funcs, struct), 'Main')[1]
 
 def recparse(lines, patterns, status, params = None, formals = None, last_formals = None):
 	if status == ".":
@@ -127,7 +127,7 @@ def structure(funcs, struct):
 			else:
 				regex, func = body.split('|')
 			head = head.replace(' ', '')
-			fix = map(primitive, filter(lambda x: x.istitle() , regex.strip().split(' ')))
+			fix = list(map(primitive, [x for x in regex.strip().split(' ') if x.istitle()]))
 			regex = regex.split('->')
 			if len(regex[0].replace(' ', '')) == 0:
 				regex[0] = None
@@ -140,7 +140,7 @@ def structure(funcs, struct):
 					.replace('Float', '(-?\d*[.,]?\d+)') \
 					.replace('String', '([0-9a-zA-Z]+)') \
 					.replace(' ', '\s*')
-			regex[1:] = map(lambda x: x.replace(' ', ''), regex[1:])
+			regex[1:] = [x.replace(' ', '') for x in regex[1:]]
 			func = func.replace(' ', '')
 			if patterns.get(head) is None:
 				patterns[head] = []

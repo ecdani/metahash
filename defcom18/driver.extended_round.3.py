@@ -64,7 +64,7 @@ class Problema:
                         self.score += v.dtrayecto + self.bonus
                     else:
                         self.score += v.dtrayecto
-        print " Score solucion: " + str(self.score),
+        print(" Score solucion: " + str(self.score))
 
     def solve(self):
         for j, v in enumerate(self.listaViajes):  # Asignar ids
@@ -156,14 +156,15 @@ def main():
     #files = ['d_metropolis']
     files = ['a_example', 'b_should_be_easy', 'c_no_hurry','d_metropolis', 'e_high_bonus']
     for f in files:
-        print "Resolviendo " + f,
+        print("Resolviendo " + f)
         problem = parse("defcom18/input/"+f+".in", s, globals())
+        print("Parsed")
         problem.solve()
         problem.eval()
         score += problem.score
         problem.escribir_viaje(f)
-        print " ...resolved"
-    print "Total score: " + str(score)
+        print(" ...resolved")
+    print("Total score: " + str(score))
 
 
 if __name__ == '__main__':
