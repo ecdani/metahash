@@ -20,13 +20,12 @@ class Problema:
             photo.id = index
 
         self.slideShow = Slideshow()
-    # para cada foto de lsit fotos, crear un objeto slide (metiendole la foto con addslide) y meterlo en Slideshow (con addlista)
+        for index, photo in enumerate(self.listFotos):
+          photo.id = index
 
     def solve(self):
         self.ordenafotos()
-        self.createSlideShow()
-        print(self.listFotos)
-        return True
+        self.createSlideShow2()
 
     def ordenafotos(self):
         self.listFotos.sort(key=lambda x: x.nEtiquetas, reverse=True)
@@ -47,7 +46,7 @@ class Problema:
         for index, photo in enumerate(pop_list_photos):
             n_tags_a_buscar = math.ceil(photo_izq.nEtiquetas/2)
             for index2, photo2 in enumerate(pop_list_photos):
-                photo2.score(n_tags_a_buscar)
+                photo2.score_new(n_tags_a_buscar)
             pop_list_photos.sort(key=lambda x: x.score, reverse=True)
             print(pop_list_photos)
             photo_dch = pop_list_photos.pop(0)
@@ -85,9 +84,8 @@ class Problema:
         for index, photo in enumerate(tmp_slide_list):
             n_tags_a_buscar = math.ceil(slide_izq.nEtiquetas/2)
             for index2, slide2 in enumerate(tmp_slide_list):
-                slide2.score(n_tags_a_buscar)
+                slide2.score_new(n_tags_a_buscar)
             tmp_slide_list.sort(key=lambda x: x.score, reverse=True)
-            print(tmp_slide_list)
             slide_dch = tmp_slide_list.pop(0)
 
             self.slideShow.addslide(slide_dch)
@@ -99,6 +97,14 @@ class Problema:
     def get_v_photos_list(self):
         return list(filter(lambda x: x.orientacion == "V", self.listFotos.copy()))
 
+    def escribirArchivo(self, file):
+        fichero = open('output/' + file, 'w')
+
+        fichero.write(str(len(self.slideShow.listaslides)) + "\n")
+        for slide in self.slideShow.listaslides:
+          fichero.write(str(slide) + "\n")
+        
+        fichero.close()
 
 class Foto:
     def __init__(self, orientacion, n_etiquetas, list_etiquetas):
@@ -112,7 +118,7 @@ class Foto:
     def __repr__(self):
         return str(self.id)
 
-    def score(self, n_tags_a_buscar):
+    def score_new(self, n_tags_a_buscar):
         # Cuanto el numero de tags de la foto se desvia mas de la foto actual es peor score. 0 es optimo.
         # Cuanto MAS, PEOR.
         self.score = abs(n_tags_a_buscar - self.nEtiquetas)
@@ -125,20 +131,26 @@ class Slideshow:
     def addslide(self, slide):
         self.listaslides.append(slide)
 
-
 class Slide:
     def __init__(self):
         self.listafotos = list()
         self.nEtiquetas = 0
+        self.score = 0
 
     def add(self, foto):
         self.listafotos.append(foto)
         self.nEtiquetas += foto.nEtiquetas
 
-    def score(self, n_tags_a_buscar):
+    def score_new(self, n_tags_a_buscar):
         # Cuanto el numero de tags de la foto se desvia mas de la foto actual es peor score. 0 es optimo.
         # Cuanto MAS, PEOR.
         self.score = abs(n_tags_a_buscar - self.nEtiquetas)
+
+    def __repr__(self):
+        fotos = list()
+        for foto in self.listafotos:
+            fotos.append(str(foto))
+        return ' '.join(fotos)
 
 
 def main():
@@ -146,18 +158,20 @@ def main():
 Main = Int -> 1@foto | Problema
 foto = String Int *String | Foto
 """
-    files = ['c_memorable_moments.txt']  # a_example.txt, b_lovely_landscapes.txt, c_memorable_moments.txt, d_pet_pictures.txt, e_shyny_selfies.txt
+    files = ['e_shiny_selfies.txt'] 
     start_time = time.time()
 
     for f in files:
-        print('Resolviendo ' + f)
-        problem_start_time = time.time()
+      print('Resolviendo ' + f)
+      problem_start_time = time.time()
 
-        problem = parse('in/' + f, parser_args, globals())
-        print('Archivo parseado')
-        problem.solve()
-        print('Problema resuelto')
-        time_passed(problem_start_time)
+      problem = parse('in/' + f, parser_args, globals())
+      print('Archivo parseado')
+      problem.solve()
+
+      problem.escribirArchivo(f)
+      print('Problema resuelto')
+      time_passed(problem_start_time)
 
     print('Tiempo total:')
     time_passed(start_time)
