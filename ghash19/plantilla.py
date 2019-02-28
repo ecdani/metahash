@@ -10,29 +10,34 @@ def time_passed(time_from):
   print(str(round(time.time() - time_from)) + ' segundos')
 
 class Problema:
-  def __init__(self, fil, col, coch, viaj, bon, pas, listViaj):
-    pass
+  def __init__(self, n_fotos, list_fotos):
+    self.nFotos = n_fotos
+    self.listFotos = list_fotos
 
   def solve(self):
+    print(self.nFotos)
+    print(self.listFotos)
     return True
 
-class Viaje:
-  def __init__(self, xi, yi, xd, yd, ti, tf):
-    pass
+class Foto:
+  def __init__(self, orientacion, n_etiquetas, list_etiquetas):
+    self.orientacion = orientacion
+    self.nEtiquetas = n_etiquetas
+    self.listEtiquetas = list_etiquetas
 
 def main():
   parser_args = """
-Main = Int Int Int Int Int Int -> 4@viaje | Problema
-viaje = Int Int Int Int Int Int | Viaje
+Main = Int -> 1@foto | Problema
+foto = String Int *String | Foto
 """
-  files = ['a_example']
+  files = ['a_example.txt']
   start_time = time.time()
 
   for f in files:
     print('Resolviendo ' + f)
     problem_start_time = time.time()
 
-    problem = parse('input/' + f + '.in', parser_args, globals())
+    problem = parse('in/' + f, parser_args, globals())
     print('Archivo parseado')
     problem.solve()
     print('Problema resuelto')
