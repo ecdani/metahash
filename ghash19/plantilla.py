@@ -77,7 +77,7 @@ foto = String Int *String | Foto
         print('Archivo parseado')
         problem.solve()
         print('Problema resuelto')
-        time_passed(start_time)
+        time_passed(problem_start_time)
 
     print('Tiempo total:')
     time_passed(start_time)
