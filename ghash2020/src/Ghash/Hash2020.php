@@ -14,14 +14,12 @@ class Hash2020 {
 
   public static function resolveAll(): void {
     foreach (scandir(self::IN_PATH) as $filename) {
-      if ($filename == '.' || $filename == '..') {
+      if (substr( $filename, 0, 1 ) === '.') {
         continue;
       }
       echo "Resolviendo $filename..." . PHP_EOL;
       self::resolve($filename);
       echo "$filename resuelto." . PHP_EOL;
-
-      break;
     }
   }
 }
