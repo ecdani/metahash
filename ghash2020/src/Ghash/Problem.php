@@ -20,6 +20,12 @@ class Problem {
   }
 
   public function writeSolution(string $filename): self {
+    $handle = fopen($filename, 'w');
+
+    //fwrite($handle, 'meh');
+
+    fclose($handle);
+
     return $this;
   }
 }

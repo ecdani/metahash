@@ -7,3 +7,5 @@ services:
     volumes:
       - ../:/project
     command: php /project/main.php
+    environment:
+      CLASS: '\Ghash\Problem'

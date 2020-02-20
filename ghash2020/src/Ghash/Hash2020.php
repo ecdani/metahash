@@ -6,7 +6,8 @@ class Hash2020 {
   const IN_PATH = __DIR__ . '/../../in/';
 
   public static function resolve(string $filename): void {
-    $problem = new Problem();
+    $class = $_ENV['CLASS'] ?? '\Ghash\Problem';
+    $problem = new $class();
     $problem->parse(self::IN_PATH . $filename);
     $problem->resolve();
     $problem->writeSolution($filename);
