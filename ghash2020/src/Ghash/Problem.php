@@ -8,7 +8,7 @@ class Problem {
   public static $totalBooks;
   public static $totalLibraries;
   public static $totalDays;
-  public static $bookScores;
+  public static $bookScores = [];
   public $libraries = [];
 
   public function parse(string $filename): self {
@@ -43,7 +43,7 @@ class Problem {
       $libraryBooks = explode(' ', $line);
 
       // Instanciar biblioteca
-      $this->libraries[] = new Library($libraryTotalBooks, $libraryDaysToSign, $libraryBooksPerDay, $libraryBooks, $libraryId);
+      $this->libraries[] = new Library($libraryTotalBooks, $libraryDaysToSign, $libraryBooksPerDay, $libraryBooks, $libraryId, $this->bookScores);
       $lineNumber++;
       $libraryId++;
     }

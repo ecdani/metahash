@@ -7,14 +7,17 @@ class Library {
   public $booksPerDay;
   public $books;
   public $id;
-  public $bookTotalScore
+  public $bookTotalScore;
+  public $totalScore;
+  public $bookScores;
 
-  public function __construct($totalBooks, $daysToSign, $booksPerDay, $books, $id) {
+  public function __construct($totalBooks, $daysToSign, $booksPerDay, $books, $id, $bookScores) {
     $this->totalBooks = $totalBooks;
     $this->daysToSign = $daysToSign;
     $this->booksPerDay = $booksPerDay;
     $this->books = $books;
     $this->id = $id;
+    $this->bookScores = $bookScores;
 
     // echo "Total de libros: $this->totalBooks" . PHP_EOL;
     // echo "Días para firmar: $this->daysToSign" . PHP_EOL;
