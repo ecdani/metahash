@@ -22,7 +22,7 @@ class Idiot extends Problem {
       fwrite($handle, $output . "\n");
       $output = '';
       foreach ($library->books as $key => $book) {
-        $output .= $key . ' ';
+        $output .= $book . ' ';
       }
       fwrite($handle, $output . "\n");
     }
