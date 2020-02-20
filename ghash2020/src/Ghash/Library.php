@@ -18,7 +18,7 @@ class Library {
     $this->books = $books;
     $this->id = $id;
     $this->bookScores = $bookScores;
-
+    $this->sortedLibrary();
     // echo "Total de libros: $this->totalBooks" . PHP_EOL;
     // echo "Días para firmar: $this->daysToSign" . PHP_EOL;
     // echo "Libros por día: $this->booksPerDay" . PHP_EOL;
