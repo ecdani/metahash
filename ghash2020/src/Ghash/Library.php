@@ -34,5 +34,18 @@ class Library {
         return $sum + $a;
       }, 0);
   }
+
+  /**
+   * Ordenados los libros por score
+   */
+  public function sortedLibrary() {
+    usort($this->books, function ($a, $b) {
+      if ($this->bookScores[$a] == $this->bookScores[$b]) {
+        return 0;
+      }
+
+      return ($this->bookScores[$a] > $this->bookScores[$b]) ? -1 : 1;
+    });
+  }
 }
 // function que  calcule otra variable de la clase (bookScore)
