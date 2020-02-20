@@ -19,6 +19,7 @@ class Library {
     // echo "Total de libros: $this->totalBooks" . PHP_EOL;
     // echo "Días para firmar: $this->daysToSign" . PHP_EOL;
     // echo "Libros por día: $this->booksPerDay" . PHP_EOL;
+    // echo "ID: $this->id" . PHP_EOL;
     // echo "Libros:" . PHP_EOL;
     // print_r($this->books);
   }

@@ -3,7 +3,7 @@
 namespace Ghash;
 
 class Problem {
-  const OUT_PATH = __DIR__ . '/../../out';
+  const OUT_PATH = __DIR__ . '/../../out/';
 
   public static $totalBooks;
   public static $totalLibraries;
@@ -43,7 +43,7 @@ class Problem {
       $libraryBooks = explode(' ', $line);
 
       // Instanciar biblioteca
-      $libraries[] = new Library($libraryTotalBooks, $libraryDaysToSign, $libraryBooksPerDay, $libraryBooks, $libraryId);
+      $this->libraries[] = new Library($libraryTotalBooks, $libraryDaysToSign, $libraryBooksPerDay, $libraryBooks, $libraryId);
       $lineNumber++;
       $libraryId++;
     }

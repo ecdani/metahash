@@ -13,9 +13,9 @@ class Idiot extends Problem {
  *  4 5
  */
   public function writeSolution(string $filename): self {
-    $handle = fopen($filename, 'w');
-    
-    fwrite($handle, $totalLibraries . "\n");
+    $handle = fopen(self::OUT_PATH . $filename, 'w');
+
+    fwrite($handle, $this->totalLibraries . "\n");
     foreach ($this->libraries as $key => $library) {
       $output = '';
       $output .= $library->id . ' ' . $library->totalBooks;
@@ -26,8 +26,6 @@ class Idiot extends Problem {
       }
       fwrite($handle, $output . "\n");
     }
-
-    //fwrite($handle, 'meh');
 
     fclose($handle);
 
