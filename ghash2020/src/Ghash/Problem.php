@@ -5,6 +5,11 @@ namespace Ghash;
 class Problem {
   const OUT_PATH = __DIR__ . '/../../out';
 
+  public static $totalBooks;
+  public static $totalLibraries;
+  public static $totalDays;
+  public static $bookScores;
+
   public function parse(string $filename): self {
     $handle = fopen($filename, 'r');
     while (($line = fgets($handle)) !== false) {
