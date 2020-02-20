@@ -27,12 +27,12 @@ class Library {
     // print_r($this->books);
   }
 
-  public getBookScore() {
-    return array_reduce(array_filter(Problem::bookScores, function(book, index) {
-      return in_array(index, $this->books);
-    } ), function(sum, a) {
-      return sum + a;
-    }, 0)
+  public function getBookScore() {
+    return array_reduce(array_filter($this->bookScores, function($book, $index) {
+      return in_array($index, $this->books);
+      }), function($sum, $a) {
+        return $sum + $a;
+      }, 0);
   }
 }
 // function que  calcule otra variable de la clase (bookScore)
