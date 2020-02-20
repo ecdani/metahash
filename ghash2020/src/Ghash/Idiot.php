@@ -20,11 +20,8 @@ class Idiot extends Problem {
       $output = '';
       $output .= $library->id . ' ' . $library->totalBooks;
       fwrite($handle, $output . "\n");
-      $output = '';
-      foreach ($library->books as $key => $book) {
-        $output .= $book . ' ';
-      }
-      fwrite($handle, $output . "\n");
+      $output = implode(' ', $library->books);
+      fwrite($handle, $output);
     }
 
     fclose($handle);
