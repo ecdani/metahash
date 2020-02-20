@@ -2,7 +2,7 @@
 
 namespace Ghash;
 
-class MoreIdiot extends Idiot
+class SortDaysToSign extends Idiot
 {
   public function resolve(): self {
     // Ordenar por tiempo de sign up, de menor a mayor
