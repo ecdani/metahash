@@ -1,0 +1,13 @@
+{
+    "name": "defcomberry/ghash2020",
+    "authors": [
+        {
+            "name": "meh",
+            "email": "meh@meh.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-0": {"Ghash": "src/"}
+    }
+}
