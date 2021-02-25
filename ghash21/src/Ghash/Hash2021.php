@@ -21,6 +21,7 @@ class Hash2021 {
       echo "Resolviendo $filename..." . PHP_EOL;
       self::resolve($filename);
       echo "$filename resuelto." . PHP_EOL;
+
     }
   }
 }

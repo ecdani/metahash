@@ -6,6 +6,6 @@ services:
       context: './docker/php'
     volumes:
       - ./:/project
-    command: php /project/main.php
+    command: php -d memory_limit=512M /project/main.php
     environment:
-      CLASS: '\Ghash\Problem'
+      CLASS: '\Ghash\Sol1'
