@@ -1,0 +1,13 @@
+{
+  "name": "ghash2022",
+  "version": "0.0.1",
+  "private": true,
+  "authors": [
+    "fmacia",
+    "ecdani",
+    "flopi"
+  ],
+  "scripts": {
+    "start": "node /app/main.js"
+  }
+}
